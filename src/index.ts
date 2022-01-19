@@ -30,7 +30,7 @@ app.listen(port, () => {
 
 Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `ENV_GLOBAL=${process.env.ENV_GLOBAL}` })
 Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `USE_PROXY=${process.env.USE_PROXY}` })
-Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `API_CRYPTO_CRAWLER_URL=${process.env.API_CRYPTO_CRAWLER_URL}` })
+Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `CORS_URL=${process.env.CORS_URL}` })
 
 /* initalize main start */
 main()
