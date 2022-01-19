@@ -41,8 +41,8 @@ const commonConfig = {
       http: require.resolve('http')
     },
     alias: {
-      '@': path.resolve(__dirname, 'src/'),
-      '~': path.resolve(__dirname, 'src/')
+      '@': path.resolve(__dirname, './'),
+      '~': path.resolve(__dirname, './')
     }
   },
   optimization: {

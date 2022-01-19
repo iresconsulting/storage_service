@@ -24,13 +24,16 @@ app.use('*', function (req: Request, res: Response, next: Function): void {
 })
 
 app.listen(port, () => {
-  Logger.generateTimeLog({ label: Logger.Labels.HTTP, message: `listening at http://localhost:${port}` })
+  Logger.generateTimeLog({ label: Logger.Labels.HTTP, message: `Listening on http://localhost:${port}` })
 })
 /* initalize express end */
 
 Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `ENV_GLOBAL=${process.env.ENV_GLOBAL}` })
 Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `USE_PROXY=${process.env.USE_PROXY}` })
 Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `CORS_URL=${process.env.CORS_URL}` })
+console.log()
+Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `PG_URI=${process.env.PG_URI}` })
+Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `MONGO_URI=${process.env.MONGO_URI}` })
 
 /* initalize main start */
 main()
