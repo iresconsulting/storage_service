@@ -5,8 +5,8 @@ import indexRouter from './routes/index'
 import Logger from './utils/logger'
 import main from './main'
 
-const base = '/scheduler'
-const port = 3001
+const base = '/'
+const port = 9000
 
 /* initalize express start */
 const app: Application = express()
