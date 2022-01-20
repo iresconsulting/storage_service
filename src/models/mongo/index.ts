@@ -1,9 +1,10 @@
 import mongoose from 'mongoose'
+import { ENV } from '~/src/utils/env'
 import Logger from '~/src/utils/logger'
 
 const env = process.env
 
-const MONGO_CONNSTR = env.ENV !== 'production'
+const MONGO_CONNSTR = env.ENV_GLOBAL !== ENV.PRD
   ? `mongodb+srv://${env.MONGO_URI}?retryWrites=true&w=majority`
   : `${env.MONOGO_URI}`
 
