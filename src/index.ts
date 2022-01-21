@@ -24,7 +24,7 @@ app.use('*', function (req: Request, res: Response, next: Function): void {
 })
 
 app.listen(port, () => {
-  Logger.generateTimeLog({ label: Logger.Labels.HTTP, message: `Listening on http://localhost:${port}` })
+  Logger.generateTimeLog({ label: Logger.Labels.HTTP, message: `Listening on ${base}:${port}` })
 })
 /* initalize express end */
 

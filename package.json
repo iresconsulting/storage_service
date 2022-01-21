@@ -39,7 +39,8 @@
     "prom-client": "^14.0.1",
     "simple-node-logger": "^18.12.24",
     "uuid": "^8.3.2",
-    "webpack-node-externals": "^2.5.2"
+    "webpack-node-externals": "^2.5.2",
+    "bignumber.js": "^9.0.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
