@@ -5,6 +5,8 @@ import Scheduler from './utils/scheduler'
 // import Firebase from './utils/firebase'
 import './utils/decimal_js'
 import './utils/big_number'
+// not required to initialize
+// import './utils/firebase/admin'
 
 async function db() {
   await Promise.allSettled([

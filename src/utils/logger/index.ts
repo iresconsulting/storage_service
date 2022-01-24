@@ -9,9 +9,10 @@ namespace Logger {
     HTTP = 'SYSTEM_HTTP',
     JOB = 'SYSTEM_JOB',
     METRICS = 'SYSTEM_METRICS',
-    PUPPETEER = 'MODULE_PUPPETEER',
+    PUPPETEER = 'MOD_PUPPETEER',
     PG = 'DB_POSTGRES',
-    MONGO = 'DB_MONGO'
+    MONGO = 'DB_MONGO',
+    FIREBASE = 'MOD_FIREBASE'
   }
 
   export function generateTimeLog({ label, message }: { label: Labels, message: string }) {

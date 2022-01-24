@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin'
+import Logger from '../logger'
 import * as credential from './credentials.json'
 
 const config = {
@@ -20,14 +21,14 @@ async function initSDK(): Promise<admin.app.App | undefined> {
     const initResult = await admin.initializeApp(config)
     if (admin) {
       await admin.auth()
-      console.log('[Firebase] Init Success')
+      Logger.generateTimeLog({ label: Logger.Labels.FIREBASE, message: 'init success.' })
       return initResult
     } else {
       throw new Error('init failed')
     }
   } catch (e: unknown) {
     const _err = (e as string).toString()
-    console.log('[Firebase] Error: Init ' + _err)
+    Logger.generateTimeLog({ label: Logger.Labels.FIREBASE, message: `init error: ${_err}` })
     Promise.reject(new Error(_err))
   }
 }

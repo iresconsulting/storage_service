@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import HttpResponse from '~/src/utils/http'
 import { Device } from './device'
 
@@ -48,10 +48,12 @@ export namespace HttpReq {
     }
   }
 
-  export function getToken(req: Request) {
-    const _parsed = req.headers.authorization?.split('Bearer ')
-    if (_parsed && _parsed.length === 2) {
-      return _parsed[1]
+  export function getToken(req: Request, opt?: { isBearer: boolean }) {
+    if (opt && opt.isBearer === true || !opt) {
+      const _parsed = req.headers.authorization?.split('Bearer ')
+      if (_parsed && _parsed.length === 2) {
+        return _parsed[1]
+      }
     }
     return ''
   }
@@ -84,5 +86,28 @@ export namespace HttpReq {
 
   export function hasToken(req: Request) {
     return Boolean(getToken(req))
+  }
+}
+
+// TODO still unusable
+export namespace HttpProcess {
+  interface Options {
+    fnArgs?: any
+    isFnAsync?: boolean
+  }
+
+  export async function commonErrorCatcher(req: Request, res: Response, next: NextFunction, businessLogicFn: Function, options?: Options) {
+    try {
+      if (options && options.isFnAsync) {
+        await businessLogicFn(...options.fnArgs)
+      } else if (options && !options.isFnAsync) {
+        businessLogicFn(...options.fnArgs)
+      } else {
+        businessLogicFn(...options?.fnArgs)
+      }
+    } catch (e: unknown) {
+      HttpRes.send500(res, (e as string).toString())
+      return
+    }
   }
 }

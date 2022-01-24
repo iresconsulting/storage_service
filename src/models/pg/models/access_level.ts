@@ -2,6 +2,15 @@ import Logger from '~/src/utils/logger'
 import { client } from '..'
 import { isRowsExist } from '../utils/helpers'
 
+export enum AppAccessLevel {
+  guest = '1',
+  user = '2',
+  admin1 = '3',
+  admin2 = '4',
+  admin3 = '5',
+  root = '6'
+}
+
 export async function createAccessLevelTable(): Promise<void | false> {
   const sql: string = `
     CREATE TABLE IF NOT EXISTS access_level (
@@ -29,12 +38,12 @@ export async function defineAccessLevel(): Promise<void | false> {
   `
 
   const accessLevel: { id: string, description: string }[] = [
-    { id: '1', description: 'guest' },
-    { id: '2', description: 'user' },
-    { id: '3', description: 'admin_1' },
-    { id: '4', description: 'admin_2' },
-    { id: '5', description: 'admin_3' },
-    { id: '6', description: 'root' }
+    { id: AppAccessLevel.guest, description: 'guest' },
+    { id: AppAccessLevel.user, description: 'user' },
+    { id: AppAccessLevel.admin1, description: 'admin_1' },
+    { id: AppAccessLevel.admin2, description: 'admin_2' },
+    { id: AppAccessLevel.admin3, description: 'admin_3' },
+    { id: AppAccessLevel.root, description: 'root' }
   ]
 
   try {

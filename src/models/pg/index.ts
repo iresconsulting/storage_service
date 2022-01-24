@@ -1,5 +1,8 @@
 import { Client, QueryResult } from 'pg'
 import Logger from '~/src/utils/logger'
+import Member from './controllers/member'
+import Transaction from './controllers/transaction'
+import Wallet from './controllers/wallet'
 
 const env = process.env
 const connectionString: string = env.PG_URI || ''
@@ -36,4 +39,10 @@ export default async function initPg(): Promise<void> {
       clearTimeout(_timeout)
     }, 3000)
   }
+}
+
+export {
+  Member,
+  Wallet,
+  Transaction
 }

@@ -14,11 +14,12 @@ namespace Member {
     email?: string,
     password?: string,
     description?: string,
-    username?: string
+    username?: string,
+    phoneNumber?: string
   ): Promise<Array<any> | false> {
     const sql = `
-      INSERT INTO member(email, password, access_token, refresh_token, provider, access_level, description, username)
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8)
+      INSERT INTO member(email, password, access_token, refresh_token, provider, access_level, description, username, phone_number)
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING *
     `
 
@@ -38,11 +39,12 @@ namespace Member {
       const descriptionMap = description ? description : emailMap
       const usernameMap = username ? username : emailMap
       let _password = ''
+      const _phoneNumber = phoneNumber ? phoneNumber : ''
 
       if (provider === 'local') {
         _password = await bcrypt.hash(password as string, BCRYPT_SALT_ROUNDS)
       } else {
-        _password = 'no_password'
+        _password = ''
       }
 
       const { rows } = await client.query(sql, [
@@ -53,7 +55,8 @@ namespace Member {
         provider,
         accessLevel,
         descriptionMap,
-        usernameMap
+        usernameMap,
+        _phoneNumber
       ])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
