@@ -28,7 +28,6 @@ router.post('/signUp', async (req, res) => {
     } else {
       // TODO userId usage
       const { user_id, email, sign_in_provider, name, picture, email_verified, phone_number } = await Firebase.authenticateToken(_token)
-      const _accessLevel = 2
       if (await Member.getByEmail(email)) {
         throw new Error('email exists')
       } else {
