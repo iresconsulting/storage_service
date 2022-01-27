@@ -1,4 +1,4 @@
-namespace NumberValidator {
+namespace NumbersValidator {
   export function isPositiveInteger(val: string | number) {
     return !isNaN(Number(val)) && Number(val) > 0 && !val.toString().includes('.')
   }
@@ -20,4 +20,4 @@ namespace NumberValidator {
   }
 }
 
-export default NumberValidator
+export default NumbersValidator

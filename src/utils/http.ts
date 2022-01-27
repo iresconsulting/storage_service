@@ -1,14 +1,26 @@
 export default class HttpResponse {
   constructor(statusCode: number, statusMsg: string, data?: any) {
-    this.statusCode = statusCode
-    this.statusMsg = statusMsg
-    if(data && data instanceof Array) this.data = [ ...data ]
-    else if(data) this.data = { ...data }
+    this._statusCode = statusCode
+    this._statusMsg = statusMsg
+    if(data && data instanceof Array) this._data = [ ...data ]
+    else if(data) this._data = { ...data }
   }
 
-  private statusCode: number
+  private _statusCode: number
 
-  private statusMsg: string
+  private _statusMsg: string
 
-  private data?: any
+  private _data?: any
+
+  public get statusCode() {
+    return this._statusCode
+  }
+
+  public get statusMsg() {
+    return this._statusMsg
+  }
+
+  public get data() {
+    return this._data
+  }
 }

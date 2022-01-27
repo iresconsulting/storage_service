@@ -1,4 +1,4 @@
-namespace RouterParamsChecker {
+namespace RouterParams {
   export function isValid(params: any[]): boolean {
     const arr = params.filter((p: any) => {
       if (typeof p === 'string') {
@@ -27,7 +27,6 @@ namespace RouterParamsChecker {
     }
     return arr.length === 0
   }
-
 }
 
-export default RouterParamsChecker
+export default RouterParams
