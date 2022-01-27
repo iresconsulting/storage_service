@@ -17,7 +17,13 @@ app.use(cookieParser())
 
 app.use(base, indexRouter)
 
-// 403 all other routes
+export const __dirname_ = __dirname.replace('/dist', '') + '/src'
+Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `__dirname_=${__dirname_}` })
+
+// publicly accessible folder
+app.use('/public', express.static(__dirname_ + '/public'))
+
+// 403 rest of the routes
 app.use('*', function (req: Request, res: Response, next: Function): void {
   res.send({ code: 403, message: 'forbidden' })
   return
