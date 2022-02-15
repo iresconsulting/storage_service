@@ -6,7 +6,7 @@ import Logger from './utils/logger'
 import main from './main'
 
 const base = '/'
-const port = 9000
+const port = process.env.PORT || 9001
 
 /* initalize express start */
 const app: Application = express()
