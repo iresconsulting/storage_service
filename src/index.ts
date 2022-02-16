@@ -5,7 +5,6 @@ import indexRouter from './routes/index'
 import Logger from './utils/logger'
 import main from './main'
 
-const base = '/'
 const port = process.env.PORT || 9001
 
 /* initalize express start */
@@ -15,7 +14,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 
-app.use(base, indexRouter)
+app.use('/', indexRouter)
 
 export const __dirname_ = __dirname.replace('/dist', '') + '/src'
 Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `__dirname_=${__dirname_}` })
@@ -30,7 +29,7 @@ app.use('*', function (req: Request, res: Response, next: Function): void {
 })
 
 app.listen(port, () => {
-  Logger.generateTimeLog({ label: Logger.Labels.HTTP, message: `Listening on ${base}:${port}` })
+  Logger.generateTimeLog({ label: Logger.Labels.HTTP, message: `Listening on :${port}` })
 })
 /* initalize express end */
 
