@@ -55,6 +55,9 @@ const commonConfig = {
         }
       })
     ]
+  },
+  experiments: {
+    topLevelAwait: true
   }
 }
 
