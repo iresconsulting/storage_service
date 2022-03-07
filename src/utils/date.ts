@@ -3,9 +3,7 @@ import moment from 'moment'
 namespace DateCustomized {
   export function isValid(date: string) {
     const _isValid = moment(date).isValid()
-    if (!_isValid) {
-      throw new Error('invalid date')
-    }
+    return _isValid
   }
 
   export function isValidRange({

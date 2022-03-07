@@ -65,11 +65,12 @@ namespace Member {
     }
   }
 
-  // TODO
+  // TODO pagination logic
   export async function getAllPagination(): Promise<Array<any> | false> {
     const sql = `
       SELECT *
       FROM member
+      ORDER BY last_login DESC
     `
 
     try {
@@ -171,7 +172,20 @@ namespace Member {
     }
   }
 
-  export async function updateByField(id: number, flag: string, value: string | boolean): Promise<Array<any> | false> {
+  export enum UserFlagField {
+    password = 'password',
+    creditLevel = 'credit_level',
+    accessToken = 'access_token',
+    allowed_login_status = 'allowed_login_status',
+    carrier_number = 'carrier_number',
+    last_login = 'last_login',
+    identification_gov_issued_number = 'identification_gov_issued_number',
+    identity_verified = 'identity_verified',
+    otp_mode = 'otp_mode',
+    access_level = 'access_level'
+  }
+
+  export async function updateByField(id: string, flag: UserFlagField, value: string | boolean): Promise<Array<any> | false> {
     let sql = ''
     try {
       let res: boolean | any[] = false
@@ -192,7 +206,13 @@ namespace Member {
       const flagMap: { [index: string]: string } = {
         creditLevel: 'credit_level',
         accessToken: 'access_token',
-        status: 'status'
+        allowed_login_status: 'allowed_login_status',
+        carrier_number: 'carrier_number',
+        last_login: 'last_login',
+        identification_gov_issued_number: 'identification_gov_issued_number',
+        identity_verified: 'identity_verified',
+        otp_mode: 'otp_mode',
+        access_level: 'access_level'
       }
 
       const flagCurrent = flagMap[flag]

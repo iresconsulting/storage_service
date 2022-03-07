@@ -52,6 +52,12 @@ namespace Firebase {
       throw new Error('verifyToken admin instance not found')
     }
   }
+
+  export enum Provider {
+    GOOGLE = 'google',
+    FACEBOOK = 'facebook',
+    TWITTER = 'twitter'
+  }
 }
 
 export default Firebase

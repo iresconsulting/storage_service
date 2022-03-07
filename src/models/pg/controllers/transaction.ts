@@ -159,6 +159,16 @@ namespace Transaction {
     return queryHandler(sql, [startDateIso, endDateIso])
   }
 
+  export async function getInDateRange({ startDateIso, endDateIso }: { startDateIso: string, endDateIso: string }): Promise<Array<any>> {
+    const sql = `
+      SELECT transaction.id, transaction.tag, transaction.status, transaction.created_at, transaction.round_id, transaction.balance_change, transaction.balance_after, transaction.direction, sub_q1.balance as wallet_balance, sub_q1.user_email as user_email, sub_q1.uid as user_id, sub_q1.user_display as user_display
+      FROM transaction
+      WHERE transaction.created_at >= $1 AND transaction.created_at <= $2
+    `
+
+    return queryHandler(sql, [startDateIso, endDateIso])
+  }
+
   export async function deleteById(id: string): Promise<Array<any> | false> {
     const sql = `
       DELETE FROM transaction
