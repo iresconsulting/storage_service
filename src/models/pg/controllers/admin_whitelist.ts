@@ -1,4 +1,4 @@
-import { AppAccessLevel } from './../models/access_level';
+import { AppAccessLevel } from './../models/access_level'
 import { client } from '..'
 import { querySuccessHandler } from './utils'
 import Logger from '~/src/utils/logger'
