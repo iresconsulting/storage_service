@@ -6,7 +6,7 @@ import { HttpReq, HttpRes } from '../utils/http'
 import authMiddleware from '../middleware/auth'
 import Firebase from '~/src/utils/firebase'
 import { isValidAdminAccessLevel } from './utils'
-import AdminWhiteList from '~/src/models/pg/controllers/admin_whitelist';
+import AdminWhiteList from '~/src/models/pg/controllers/admin_whitelist'
 
 const router: Router = express.Router()
 
@@ -63,6 +63,26 @@ router.post('/verification', authMiddleware, async (req, res) => {
       return
     }
     HttpRes.send200(res, 'success', { data: _result })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.post('/whitelist', async (req, res) => {
+  try {
+    const { accessLevel, email } = req.body
+    if (!isValidAdminAccessLevel(accessLevel)) {
+      HttpRes.send400(res)
+      return
+    }
+    const _rows = await AdminWhiteList.create(email, accessLevel)
+    if (!_rows) {
+      HttpRes.send400(res)
+      return
+    }
+    HttpRes.send200(res, 'success', { data: _rows })
     return
   } catch (e: unknown) {
     HttpRes.send500(res)

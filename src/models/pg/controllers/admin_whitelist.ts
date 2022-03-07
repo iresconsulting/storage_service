@@ -5,16 +5,17 @@ import Logger from '~/src/utils/logger'
 
 namespace AdminWhiteList {
   export async function create(
-    email: string
+    email: string,
+    accessLevel: AppAccessLevel
   ): Promise<Array<any> | false> {
     const sql = `
-      INSERT INTO admin_whitelist(email)
-      VALUES($1)
+      INSERT INTO admin_whitelist(email, access_level)
+      VALUES($1, $2)
       RETURNING *
     `
 
     try {
-      const { rows } = await client.query(sql, [email])
+      const { rows } = await client.query(sql, [email, accessLevel])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `create Error ${(e as string).toString()}` })
