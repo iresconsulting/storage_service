@@ -2,7 +2,7 @@
   "name": "dfon-service-user",
   "version": "0.1.0",
   "private": "true",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "start": "babel-node ./dist/app.bundle.js",
     "dev": "npm-run-all --parallel build:dev watch",
