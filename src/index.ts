@@ -1,9 +1,13 @@
 import express, { Application, Response, Request } from 'express'
 import cookieParser from 'cookie-parser'
 
-import indexRouter from './routes/index'
 import Logger from './utils/logger'
 import main from './main'
+
+import indexRouter from './routes/index'
+import adminRouter from './routes/admin'
+import memberRouter from './routes/member'
+import transactionRouter from './routes/transaction'
 
 const port = process.env.PORT || 9001
 
@@ -15,6 +19,9 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 
 app.use('/', indexRouter)
+app.use('/admin', adminRouter)
+app.use('/member', memberRouter)
+app.use('/transaction', transactionRouter)
 
 export const __dirname_ = __dirname.replace('/dist', '') + '/src'
 Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `__dirname_=${__dirname_}` })
