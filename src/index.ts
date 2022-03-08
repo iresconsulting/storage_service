@@ -31,7 +31,7 @@ app.use('/public', express.static(__dirname_ + '/public'))
 
 // 403 rest of the routes
 app.use('*', function (req: Request, res: Response, next: Function): void {
-  res.send({ code: 403, message: 'forbidden: endpoint: /member' })
+  res.send({ code: 403, message: 'forbidden: [*/member]' })
   return
 })
 
