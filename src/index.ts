@@ -6,7 +6,7 @@ import main from './main'
 
 import indexRouter from './routes/index'
 import adminRouter from './routes/admin'
-import memberRouter from './routes/member'
+import userRouter from './routes/user'
 import transactionRouter from './routes/transaction'
 
 const port = process.env.PORT || 9001
@@ -20,7 +20,7 @@ app.use(cookieParser())
 
 app.use('/', indexRouter)
 app.use('/admin', adminRouter)
-app.use('/member', memberRouter)
+app.use('/user', userRouter)
 app.use('/transaction', transactionRouter)
 
 export const __dirname_ = __dirname.replace('/dist', '') + '/src'
@@ -31,7 +31,7 @@ app.use('/public', express.static(__dirname_ + '/public'))
 
 // 403 rest of the routes
 app.use('*', function (req: Request, res: Response, next: Function): void {
-  res.send({ code: 403, message: 'forbidden' })
+  res.send({ code: 403, message: 'forbidden: endpoint: /member' })
   return
 })
 
