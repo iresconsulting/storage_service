@@ -5,7 +5,7 @@ export async function createTransactionTable(): Promise<void | false> {
   const sql: string = `
     CREATE TABLE IF NOT EXISTS transaction (
       id bigserial PRIMARY KEY,
-      member_id bigserial DEFAULT '',
+      member_id bigserial,
       wallet_id bigserial,
       amount text DEFAULT '0',
       gas text DEFAULT '0',
@@ -17,7 +17,7 @@ export async function createTransactionTable(): Promise<void | false> {
       last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       CONSTRAINT fk_wallet_id
         FOREIGN KEY(wallet_id)
-	        REFERENCES wallet(id)
+	        REFERENCES wallet(id),
       CONSTRAINT fk_member_id
         FOREIGN KEY(member_id)
           REFERENCES member(id)
