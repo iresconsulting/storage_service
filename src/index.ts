@@ -1,5 +1,6 @@
 import express, { Application, Response, Request } from 'express'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 
 import Logger from './utils/logger'
 import main from './main'
@@ -14,6 +15,7 @@ const port = process.env.PORT || 9001
 /* initalize express start */
 const app: Application = express()
 
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())

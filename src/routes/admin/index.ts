@@ -69,10 +69,30 @@ router.post('/verification', authMiddleware, async (req, res) => {
   }
 })
 
+router.get('/whitelist', async (req, res) => {
+  try {
+    const _rows = await AdminWhiteList.getAllPagination()
+    if (!_rows) {
+      HttpRes.send400(res)
+      return
+    }
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
 router.post('/whitelist', async (req, res) => {
   try {
     const { accessLevel, email } = req.body
     if (!isValidAdminAccessLevel(accessLevel)) {
+      HttpRes.send400(res)
+      return
+    }
+    const _isExist = await AdminWhiteList.getByEmail(email)
+    if (_isExist) {
       HttpRes.send400(res)
       return
     }

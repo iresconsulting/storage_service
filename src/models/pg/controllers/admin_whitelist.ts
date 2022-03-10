@@ -44,7 +44,7 @@ namespace AdminWhiteList {
     const sql = `
       SELECT *
       FROM admin_whitelist
-      WHERE email = $1 AND access_level = $2
+      WHERE email = $1
       ORDER BY last_updated DESC
     `
 
