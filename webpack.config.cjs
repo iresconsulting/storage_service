@@ -15,7 +15,8 @@ const commonConfig = {
   devtool: 'inline-source-map',
   mode: 'none',
   entry: {
-    app: './src/index.ts'
+    app: './src/index.ts',
+    db: './src/models/pg/transactions/index.ts'
   },
   output: {
     path: path.join(__dirname, 'dist'),
