@@ -46,7 +46,7 @@ router.post('/verification', authMiddleware, async (req, res) => {
   try {
     const _token = HttpReq.getToken(req)
     const { user_id: userId, email } = await Firebase.authenticateToken(_token)
-    const _result = await Member.updateByField(userId, Member.UserFlagField.accessToken, _token)
+    const _result = await Member.updateByField(userId, Member.UserFlagField.access_token, _token)
     if (!_result) {
       HttpRes.send400(res)
       return

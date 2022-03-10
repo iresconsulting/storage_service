@@ -51,18 +51,21 @@ router.post('/verification', authMiddleware, async (req, res) => {
   try {
     const _token = HttpReq.getToken(req)
     const { user_id: userId, email } = await Firebase.authenticateToken(_token)
+
     const _rows = await AdminWhiteList.getByEmail(email)
-    if (!_rows) {
+    if (!_rows || _rows.length === 0) {
       HttpRes.send400(res)
       return
     }
-    const _result = await Member.updateByField(userId, Member.UserFlagField.accessToken, _token)
-    if (!_result) {
+
+    const _isExist = await Member.getByEmail(email)
+    if (_isExist && _isExist.length) {
+      HttpRes.send200(res, 'success', { data: _isExist })
+      return
+    } else {
       HttpRes.send400(res)
       return
     }
-    HttpRes.send200(res, 'success', { data: _result })
-    return
   } catch (e: unknown) {
     HttpRes.send500(res)
     return
@@ -71,7 +74,7 @@ router.post('/verification', authMiddleware, async (req, res) => {
 
 router.get('/whitelist', async (req, res) => {
   try {
-    const _rows = await AdminWhiteList.getAllPagination()
+    const _rows = await AdminWhiteList.getAllPagination()    
     if (!_rows) {
       HttpRes.send400(res)
       return
@@ -92,11 +95,12 @@ router.post('/whitelist', async (req, res) => {
       return
     }
     const _isExist = await AdminWhiteList.getByEmail(email)
-    if (_isExist) {
+    
+    if (_isExist && _isExist.length > 0) {
       HttpRes.send400(res)
       return
     }
-    const _rows = await AdminWhiteList.create(email, accessLevel)
+    const _rows = await AdminWhiteList.create(email, accessLevel)    
     if (!_rows) {
       HttpRes.send400(res)
       return
@@ -111,22 +115,27 @@ router.post('/whitelist', async (req, res) => {
 
 router.post('/creation', async (req, res) => {
   try {
-    const { accessLevel, email } = req.body
-    if (!isValidAdminAccessLevel(accessLevel)) {
+    const _token = HttpReq.getToken(req)
+    
+    const { user_id: userId, email } = await Firebase.authenticateToken(_token)
+    const _rows = await AdminWhiteList.getByEmail(email)
+    if (!_rows || _rows.length === 0) {
       HttpRes.send400(res)
       return
     }
-    const _rows = await AdminWhiteList.getByEmailAndAccessLevel(email, accessLevel)
-    if (!_rows) {
-      HttpRes.send400(res)
-      return
+    const { access_level } = _rows[0]
+    const _isExist = await Member.getByEmail(email)
+    
+    if (!_isExist || _isExist.length === 0) {
+      const _result = await Member.create('', '', Firebase.Provider.GOOGLE, access_level, email, '', '', '', '')      
+      if (!_result) {
+        HttpRes.send400(res)
+        return
+      }
+      HttpRes.send200(res, 'success', { data: _result })
+    } else {
+      HttpRes.send200(res, 'success', { data: _isExist })
     }
-    const _result = await Member.create('', '', Firebase.Provider.GOOGLE, accessLevel, email, '', '', '', '')
-    if (!_result) {
-      HttpRes.send400(res)
-      return
-    }
-    HttpRes.send200(res, 'success', { data: _result })
     return
   } catch (e: unknown) {
     HttpRes.send500(res)
@@ -143,7 +152,7 @@ router.post('/info', authMiddleware, async (req, res) => {
       return
     }
     const { fieldName, value } = req.body
-    const _result = await Member.updateByField(_userId, fieldName as Member.UserFlagField, value)
+    const _result = await Member.updateByField(_userId, fieldName as Member.UserFlagField, value.toString())
     if (!_result) {
       HttpRes.send400(res)
       return

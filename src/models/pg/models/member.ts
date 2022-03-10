@@ -13,7 +13,7 @@ export async function createMemberTable(): Promise<void | false> {
       credit_level text DEFAULT '0',
       access_level text NOT NULL,
       description text DEFAULT '0',
-      access_token text NOT NULL,
+      access_token text DEFAULT '',
       refresh_token text NOT NULL,
       otp_mode boolean DEFAULT false,
       identity_verified boolean DEFAULT false,

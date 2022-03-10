@@ -175,7 +175,7 @@ namespace Member {
   export enum UserFlagField {
     password = 'password',
     creditLevel = 'credit_level',
-    accessToken = 'access_token',
+    access_token = 'access_token',
     allowed_login_status = 'allowed_login_status',
     carrier_number = 'carrier_number',
     last_login = 'last_login',
@@ -191,21 +191,21 @@ namespace Member {
       let res: boolean | any[] = false
 
       // password has hash
-      if (flag === 'password') {
-        sql = `
-          UPDATE member
-          SET password = $2, last_updated = $3
-          WHERE id = $1
-          RETURNING *
-        `
-        const hashedPassword: string = await bcrypt.hash(value as string, BCRYPT_SALT_ROUNDS)
-        const { rows } = await client.query(sql, [id, hashedPassword, genDateNowWithoutLocalOffset()])
-        res = rows
-      }
+      // if (flag === 'password') {
+      //   sql = `
+      //     UPDATE member
+      //     SET password = $2, last_updated = $3
+      //     WHERE id = $1
+      //     RETURNING *
+      //   `
+      //   const hashedPassword: string = await bcrypt.hash(value as string, BCRYPT_SALT_ROUNDS)
+      //   const { rows } = await client.query(sql, [id, hashedPassword, genDateNowWithoutLocalOffset()])
+      //   res = rows
+      // }
 
       const flagMap: { [index: string]: string } = {
         creditLevel: 'credit_level',
-        accessToken: 'access_token',
+        access_token: 'access_token',
         allowed_login_status: 'allowed_login_status',
         carrier_number: 'carrier_number',
         last_login: 'last_login',
@@ -228,7 +228,10 @@ namespace Member {
         RETURNING *
       `
 
-      const { rows } = await client.query(sql, [id, value, genDateNowWithoutLocalOffset()])
+      console.log('flagCurrent', flagCurrent);
+      
+
+      const { rows } = await client.query(sql, [id, value.toString(), genDateNowWithoutLocalOffset()])
       res = rows
       return querySuccessHandler(res)
     } catch (e: unknown) {
