@@ -6,7 +6,7 @@ import { createAdminWhitelistTable, dropAdminWhitelistTable } from '../models/ad
 import { createMemberTable, dropMemberTable } from '../models/member'
 import { createAccessLevelTable, defineAccessLevel } from '../models/access_level'
 
-import Member from '../controllers/member'
+// import Member from '../controllers/member'
 
 // import configController from '~/src/models/mongo/controllers/config'
 // import settingController from '~/src/models/mongo/controllers/setting'
@@ -36,7 +36,7 @@ await createMemberTable()
 await createWalletTable()
 await createTransactionTable()
 
-await Member.create('', '', 'local', '6', 'root1', 'root1')
-await Member.create('', '', 'local', '5', 'admin1', 'admin1')
+// await Member.create('', '', 'local', '6', 'root1', 'root1')
+// await Member.create('', '', 'local', '5', 'admin1', 'admin1')
 
 process.exit(0)
