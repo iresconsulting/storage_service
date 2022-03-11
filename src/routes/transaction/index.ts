@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
     if (!DateCustomized.isValidRange({ startDate: _startDate, endDate: _endDate })) {
       HttpRes.send400(res, 'input invalid')
       return
-    }
+    }    
     const _queryPayload = { startDateIso: _startDate, endDateIso: _endDate }
     let _rows = []
     if (_info) {
@@ -30,6 +30,8 @@ router.get('/', async (req, res) => {
     HttpRes.send200(res, 'success', { data: _rows })
     return
   } catch (e: unknown) {
+    console.log('e', String(e));
+    
     HttpRes.send500(res)
     return
   }
