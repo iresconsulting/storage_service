@@ -226,10 +226,7 @@ namespace Member {
         SET ${flagCurrent} = $2, last_updated = $3
         WHERE id = $1
         RETURNING *
-      `
-
-      console.log('flagCurrent', flagCurrent);
-      
+      `      
 
       const { rows } = await client.query(sql, [id, value.toString(), genDateNowWithoutLocalOffset()])
       res = rows

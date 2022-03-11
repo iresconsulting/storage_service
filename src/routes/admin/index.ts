@@ -143,6 +143,28 @@ router.post('/creation', async (req, res) => {
   }
 })
 
+router.post('/user/info', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.query
+    const _userId = id?.toString() || ''
+    if (!_userId) {
+      HttpRes.send400(res)
+      return
+    }
+    const { fieldName, value } = req.body
+    const _result = await Member.updateByField(_userId, fieldName as Member.UserFlagField, value.toString())
+    if (!_result) {
+      HttpRes.send400(res)
+      return
+    }
+    HttpRes.send200(res, 'success', { data: _result })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
 router.post('/info', authMiddleware, async (req, res) => {
   try {
     const { userId } = req.query
