@@ -26,9 +26,14 @@ namespace AdminWhiteList {
   // TODO pagination logic
   export async function getAllPagination(): Promise<Array<any> | false> {
     const sql = `
-      SELECT *
+      SELECT
+        admin_whitelist.email as email,
+        admin_whitelist.access_level as access_level,
+        admin_whitelist.created_at as created_at,
+        member.allowed_login_status as status
       FROM admin_whitelist
-      ORDER BY last_updated DESC
+      LEFT JOIN member on admin_whitelist.email = member.email
+      ORDER BY admin_whitelist.last_updated DESC
     `
 
     try {
