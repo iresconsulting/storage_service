@@ -30,7 +30,8 @@ namespace AdminWhiteList {
         admin_whitelist.email as email,
         admin_whitelist.access_level as access_level,
         admin_whitelist.created_at as created_at,
-        member.allowed_login_status as status
+        member.allowed_login_status as status,
+        member.id as id
       FROM admin_whitelist
       LEFT JOIN member on admin_whitelist.email = member.email
       ORDER BY admin_whitelist.last_updated DESC

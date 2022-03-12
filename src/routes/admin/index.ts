@@ -89,7 +89,12 @@ router.get('/whitelist', async (req, res) => {
 
 router.post('/whitelist', async (req, res) => {
   try {
-    const { accessLevel, email } = req.body
+    const { accessLevel, email, action, id, value } = req.body
+    if (action === 'status') {
+      const _rows = await Member.updateByField(id, Member.UserFlagField.allowed_login_status, Boolean(value))
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    }
     if (!isValidAdminAccessLevel(accessLevel)) {
       HttpRes.send400(res)
       return
