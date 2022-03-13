@@ -47,6 +47,38 @@ router.get('/member', authMiddleware, async (req, res) => {
   }
 })
 
+router.post('/member', async (req, res) => {
+  try {
+    const { accessLevel, email, action, id, value } = req.body
+    if (action === 'status') {
+      const _rows = await Member.updateByField(id, Member.UserFlagField.allowed_login_status, Boolean(value))
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    }
+    if (!isValidAdminAccessLevel(accessLevel)) {
+      HttpRes.send400(res)
+      return
+    }
+    const _isExist = await Member.getByEmail(email)
+    
+    if (_isExist && _isExist.length > 0) {
+      HttpRes.send400(res)
+      return
+    }
+    const _rows = await Member.create('', '', '', accessLevel, email, '', '', '', '')    
+    if (!_rows) {
+      HttpRes.send400(res)
+      return
+    }
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+
 router.post('/verification', authMiddleware, async (req, res) => {
   try {
     const _token = HttpReq.getToken(req)
@@ -117,7 +149,6 @@ router.post('/whitelist', async (req, res) => {
     return
   }
 })
-
 router.post('/creation', async (req, res) => {
   try {
     const _token = HttpReq.getToken(req)
