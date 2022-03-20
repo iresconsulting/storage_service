@@ -161,7 +161,8 @@ namespace Member {
         member.created_at as created_at,
         member.allowed_login_status as allowed_login_status,
         wallet.balance_total as balance_total,
-        member.provider as wallet_address
+        member.provider as wallet_address,
+        wallet.id as wallet_id
       FROM wallet
       LEFT JOIN member
       ON member.id = wallet.user_id
@@ -184,12 +185,12 @@ namespace Member {
             .filter((row2) => row2.member_id === row.id)
             .reduce((acc, curr) => {
               if (curr.direction) {
-                acc += Number(curr)
+                acc += Number(curr.amount)
               } else {
-                acc -= Number(curr)
+                acc -= Number(curr.amount)
               }
               return acc
-            }, 0)
+            }, 0) || 0
         }
       })
       return querySuccessHandler(_rows)

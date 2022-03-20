@@ -4,29 +4,31 @@ import { isRowsExist } from '../utils/helpers'
 import { queryHandler, querySuccessHandler } from './utils'
 
 namespace Transaction {
-  export async function create(memberId: string, balanceChange: number, direction: boolean, tag?: string, description?: string, gas?: string): Promise<Array<any> | false> {
+  export async function create(memberId: string, balanceChange: number, direction: boolean, tag?: string, description?: string, gas?: string, wallet_id?: string): Promise<Array<any> | false> {
     const sql = `
-      INSERT INTO transaction(member_id, amount, direction, tag, description, status, gas)
-      VALUES($1, $2, $3, $4, $5, $6, $7)
+      INSERT INTO transaction(member_id, amount, direction, tag, description, status, gas, wallet_id)
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *
     `
     const _amount = Number(balanceChange)
     const _tag = tag || ''
     const _description = description || ''
     const _gas = gas || ''
+    const _wallet_id = wallet_id || ''
 
     if (isNaN(_amount)) {
       return false
     }
 
     try {
-      const { rows } = await client.query(sql, [memberId, _amount, direction, _tag, _description, false, _gas])
+      const { rows } = await client.query(sql, [memberId, _amount, direction, _tag, _description, false, _gas, _wallet_id])
       if (isRowsExist(rows) && rows) {
         return rows
       } else {
         throw new Error(`Query: ${sql} failed.`)
       }
     } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `create Error: ${(e as string).toString()}` })
       return false
     }
   }

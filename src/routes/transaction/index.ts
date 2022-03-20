@@ -1,6 +1,7 @@
 import express, { Router } from 'express'
 import { Transaction } from '~/src/models/pg'
 import DateCustomized from '~/src/utils/date'
+import authMiddleware from '../middleware/auth'
 import { HttpRes } from '../utils/http'
 
 const router: Router = express.Router()
@@ -37,9 +38,23 @@ router.get('/', async (req, res) => {
   }
 })
 
-router.get('/', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    HttpRes.send200(res)
+    const { member_id, amount, direction, wallet_id } = req.body
+    const _rows = await Transaction.create(
+      member_id,
+      Number(amount),
+      direction,
+      'system_payable_admin_to_artist',
+      'system_payable_admin_to_artist',
+      'system_payable_admin_to_artist',
+      wallet_id
+    )
+    if (_rows) {
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    }
+    HttpRes.send500(res)
     return
   } catch (e: unknown) {
     HttpRes.send500(res)
