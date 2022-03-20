@@ -1,7 +1,6 @@
 import express, { Router } from 'express'
 import { Transaction } from '~/src/models/pg'
 import DateCustomized from '~/src/utils/date'
-import authMiddleware from '../middleware/auth'
 import { HttpRes } from '../utils/http'
 
 const router: Router = express.Router()
@@ -13,6 +12,7 @@ router.get('/', async (req, res) => {
     const _info = Boolean(info?.toString())
     const _startDate = startDate?.toString() || ''
     const _endDate = endDate?.toString() || ''
+
     if (!DateCustomized.isValid(_startDate) || !DateCustomized.isValid(_endDate)) {
       HttpRes.send400(res, 'input invalid')
       return
@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
     if (!DateCustomized.isValidRange({ startDate: _startDate, endDate: _endDate })) {
       HttpRes.send400(res, 'input invalid')
       return
-    }    
+    }
     const _queryPayload = { startDateIso: _startDate, endDateIso: _endDate }
     let _rows = []
     if (_info) {
@@ -31,8 +31,6 @@ router.get('/', async (req, res) => {
     HttpRes.send200(res, 'success', { data: _rows })
     return
   } catch (e: unknown) {
-    console.log('e', String(e));
-    
     HttpRes.send500(res)
     return
   }

@@ -129,7 +129,7 @@ namespace Transaction {
 
   export async function getWithUserInfoInDateRange({ startDateIso, endDateIso }: { startDateIso: string, endDateIso: string }): Promise<Array<any>> {
     const sql = `
-      SELECT transaction.id, transaction.tag, transaction.status, transaction.created_at, transaction.round_id, transaction.balance_change, transaction.balance_after, transaction.direction, sub_q1.balance as wallet_balance, sub_q1.user_email as user_email, sub_q1.uid as user_id, sub_q1.user_display as user_display
+      SELECT transaction.id, transaction.tag, transaction.status, transaction.created_at, transaction.amount, transaction.direction, sub_q1.balance as wallet_balance, sub_q1.user_email as user_email, sub_q1.uid as user_id, sub_q1.user_display as user_display
       FROM transaction
       LEFT JOIN (
         SELECT member.id as uid, member.email as user_email, member.username as user_display, wallet.balance_total as balance, wallet.id as wid
