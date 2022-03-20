@@ -44,6 +44,29 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 })
 
+router.get('/artists', authMiddleware, async (req, res) => {
+  try {
+    const _rows = await Member.getByAccessLevelAndWalletInfo([AppAccessLevel.admin3, AppAccessLevel.admin3]) || []
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.post('/artists', authMiddleware, async (req, res) => {
+  try {
+    const { wallet_address, user_id } = req.body
+    const _rows = await Member.updateByField(user_id, Member.UserFlagField.provider, wallet_address)
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
 router.post('/verification', authMiddleware, async (req, res) => {
   try {
     const _token = HttpReq.getToken(req)

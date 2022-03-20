@@ -11,7 +11,7 @@ import './utils/big_number'
 async function db() {
   await Promise.allSettled([
     initPg(),
-    initMongo()
+    // initMongo()
   ])
 }
 

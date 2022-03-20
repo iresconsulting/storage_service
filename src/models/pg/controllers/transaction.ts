@@ -1,49 +1,32 @@
 import Logger from '~/src/utils/logger'
 import { client } from '..'
-import { isRowsExist, genDateNowWithoutLocalOffset } from '../utils/helpers'
+import { isRowsExist } from '../utils/helpers'
 import { queryHandler, querySuccessHandler } from './utils'
-import Wallet from './wallet'
 
 namespace Transaction {
-  export async function create(walletId: string, balanceBefore: number, balanceChange: number, direction: boolean, tag?: string, roundId?: string): Promise<Array<any> | false> {
+  export async function create(memberId: string, balanceChange: number, direction: boolean, tag?: string, description?: string, gas?: string): Promise<Array<any> | false> {
     const sql = `
-      INSERT INTO transaction(wallet_id, balance_before, balance_after, balance_change, direction, created_at, last_updated, tag, round_id)
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      INSERT INTO transaction(member_id, amount, direction, tag, description, status, gas)
+      VALUES($1, $2, $3, $4, $5, $6, $7)
       RETURNING *
     `
-    const now = genDateNowWithoutLocalOffset()
-    const balanceBeforeToNumber = Number(balanceBefore)
-    const balanceChangeToNumber = Number(balanceChange)
-    const _roundId = roundId || ''
+    const _amount = Number(balanceChange)
+    const _tag = tag || ''
+    const _description = description || ''
+    const _gas = gas || ''
 
-    let t = ''
-    if (tag !== undefined) {
-      t = tag
+    if (isNaN(_amount)) {
+      return false
     }
 
-    if (!isNaN(balanceBeforeToNumber) && !isNaN(balanceChangeToNumber)) {
-      const balanceAfter = direction === true ? balanceBeforeToNumber + balanceChangeToNumber : balanceBeforeToNumber - balanceChangeToNumber
-      try {
-        const walletUpdateResult = await Wallet.updateBalanceTotal(walletId, balanceChange, direction)
-        if (!walletUpdateResult) {
-          throw new Error(`Query: updateWalletBalance failed. balance cannot fall below 0`)
-        }
-
-        const { rows } = await client.query(sql, [walletId, balanceBefore, balanceAfter, balanceChange, direction, now, now, t, _roundId])
-
-        if (isRowsExist(rows) && rows) {
-          // await updateWalletBalance(walletId, balanceAfter)
-          // console.log('[DB] create Success: ')
-          // console.log(rows)
-          return rows
-        } else {
-          throw new Error(`Query: ${sql} failed.`)
-        }
-      } catch (e: unknown) {
-        // console.log('[DB] create Error: ' + (e as string).toString())
-        return false
+    try {
+      const { rows } = await client.query(sql, [memberId, _amount, direction, _tag, _description, false, _gas])
+      if (isRowsExist(rows) && rows) {
+        return rows
+      } else {
+        throw new Error(`Query: ${sql} failed.`)
       }
-    } else {
+    } catch (e: unknown) {
       return false
     }
   }
@@ -75,7 +58,7 @@ namespace Transaction {
       const { rows } = await client.query(sql, [id])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
-      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getAllPagination Error: ${(e as string).toString()}` })
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getById Error: ${(e as string).toString()}` })
       return false
     }
   }
@@ -144,25 +127,15 @@ namespace Transaction {
 
   export async function getWithUserInfoInDateRange({ startDateIso, endDateIso }: { startDateIso: string, endDateIso: string }): Promise<Array<any>> {
     const sql = `
-      SELECT transaction.id, transaction.tag, transaction.status, transaction.created_at, transaction.amount, transaction.direction, sub_q1.balance as wallet_balance, sub_q1.user_email as user_email, sub_q1.uid as user_id
+      SELECT transaction.id, transaction.tag, transaction.status, transaction.created_at, transaction.round_id, transaction.balance_change, transaction.balance_after, transaction.direction, sub_q1.balance as wallet_balance, sub_q1.user_email as user_email, sub_q1.uid as user_id, sub_q1.user_display as user_display
       FROM transaction
       LEFT JOIN (
-        SELECT member.id as uid, member.email as user_email, wallet.balance_total as balance, wallet.id as wid
+        SELECT member.id as uid, member.email as user_email, member.username as user_display, wallet.balance_total as balance, wallet.id as wid
         FROM wallet
         LEFT JOIN member
         ON wallet.user_id = member.id
       ) sub_q1
       ON transaction.wallet_id = sub_q1.wid
-      WHERE transaction.created_at >= $1 AND transaction.created_at <= $2
-    `
-
-    return queryHandler(sql, [startDateIso, endDateIso])
-  }
-
-  export async function getInDateRange({ startDateIso, endDateIso }: { startDateIso: string, endDateIso: string }): Promise<Array<any>> {
-    const sql = `
-      SELECT transaction.id, transaction.tag, transaction.status, transaction.created_at, transaction.round_id, transaction.balance_change, transaction.balance_after, transaction.direction, sub_q1.balance as wallet_balance, sub_q1.user_email as user_email, sub_q1.uid as user_id, sub_q1.user_display as user_display
-      FROM transaction
       WHERE transaction.created_at >= $1 AND transaction.created_at <= $2
     `
 
@@ -194,7 +167,16 @@ namespace Transaction {
     `
     return await queryHandler(sql, [id, status])
   }
+
+  export async function getInDateRange({ startDateIso, endDateIso }: { startDateIso: string, endDateIso: string }): Promise<Array<any>> {
+    const sql = `
+      SELECT transaction.id, transaction.tag, transaction.status, transaction.created_at, transaction.round_id, transaction.balance_change, transaction.balance_after, transaction.direction, sub_q1.balance as wallet_balance, sub_q1.user_email as user_email, sub_q1.uid as user_id, sub_q1.user_display as user_display
+      FROM transaction
+      WHERE transaction.created_at >= $1 AND transaction.created_at <= $2
+    `
+  
+    return queryHandler(sql, [startDateIso, endDateIso])
+  }
 }
 
 export default Transaction
-

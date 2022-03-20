@@ -15,7 +15,7 @@ router.get('/', authMiddleware, async (req, res) => {
     const { userId } = req.query
     const _userId = userId?.toString() || ''
     if (!_userId) {
-      _rows = await Member.getByAccessLevel([AppAccessLevel.admin1, AppAccessLevel.root]) || []
+      _rows = await Member.getByAccessLevel([AppAccessLevel.root, AppAccessLevel.root]) || []
       HttpRes.send200(res, 'success', { data: _rows })
       return
     }
@@ -47,7 +47,7 @@ router.get('/member', authMiddleware, async (req, res) => {
   }
 })
 
-router.post('/member', async (req, res) => {
+router.post('/member', authMiddleware, async (req, res) => {
   try {
     const { accessLevel, email, action, id, value } = req.body
     if (action === 'status') {
@@ -77,7 +77,6 @@ router.post('/member', async (req, res) => {
     return
   }
 })
-
 
 router.post('/verification', authMiddleware, async (req, res) => {
   try {
@@ -149,6 +148,7 @@ router.post('/whitelist', async (req, res) => {
     return
   }
 })
+
 router.post('/creation', async (req, res) => {
   try {
     const _token = HttpReq.getToken(req)

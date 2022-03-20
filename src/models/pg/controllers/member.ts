@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import { isRowsExist, genDateNowWithoutLocalOffset } from '../utils/helpers'
 import { querySuccessHandler } from './utils'
 import Logger from '~/src/utils/logger'
+import Wallet from './wallet'
 
 namespace Member {
   export async function create(
@@ -58,6 +59,9 @@ namespace Member {
         usernameMap,
         _phoneNumber
       ])
+
+      await Wallet.create(rows[0].id)
+
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `create Error ${(e as string).toString()}` })
@@ -148,6 +152,54 @@ namespace Member {
     }
   }
 
+  export async function getByAccessLevelAndWalletInfo(accessLevelRange: string[]): Promise<Array<any> | false> {
+    const sql = `
+      SELECT
+        member.id as id,
+        member.email as email,
+        member.last_login as last_login,
+        member.created_at as created_at,
+        member.allowed_login_status as allowed_login_status,
+        wallet.balance_total as balance_total,
+        member.provider as wallet_address
+      FROM wallet
+      LEFT JOIN member
+      ON member.id = wallet.user_id
+      WHERE access_level >= $1 AND access_level <= $2
+    `
+
+    const sql2 = `
+      SELECT amount, member_id
+      FROM transaction
+    `
+
+    try {
+      const { rows } = await client.query(sql, [Number(accessLevelRange[0]), Number(accessLevelRange[1])])
+
+      const { rows: rows2 } = await client.query(sql2)
+      const _rows = rows.map((row) => {
+        return {
+          ...row,
+          cumulative_earnings: rows2
+            .filter((row2) => row2.member_id === row.id)
+            .reduce((acc, curr) => {
+              if (curr.direction) {
+                acc += Number(curr)
+              } else {
+                acc -= Number(curr)
+              }
+              return acc
+            }, 0)
+        }
+      })
+      return querySuccessHandler(_rows)
+
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getByAccessLevelAndWalletInfo Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
   export async function getAndVerifyByPassword(email: string, password: string): Promise<Array<any> | false> {
     const sql = `
       SELECT *
@@ -182,7 +234,8 @@ namespace Member {
     identification_gov_issued_number = 'identification_gov_issued_number',
     identity_verified = 'identity_verified',
     otp_mode = 'otp_mode',
-    access_level = 'access_level'
+    access_level = 'access_level',
+    provider = 'provider'
   }
 
   export async function updateByField(id: string, flag: UserFlagField, value: string | boolean): Promise<Array<any> | false> {
@@ -212,7 +265,8 @@ namespace Member {
         identification_gov_issued_number: 'identification_gov_issued_number',
         identity_verified: 'identity_verified',
         otp_mode: 'otp_mode',
-        access_level: 'access_level'
+        access_level: 'access_level',
+        provider: 'provider'
       }
 
       const flagCurrent = flagMap[flag]
