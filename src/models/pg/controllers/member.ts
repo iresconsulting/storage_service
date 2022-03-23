@@ -306,6 +306,43 @@ namespace Member {
       return false
     }
   }
+
+  export async function getByIdWithAddressInfo(id: string): Promise<Array<any> | false> {
+    const sql = `
+      SELECT
+        member.id as id,
+        member_address.address_line_one as address_line_one,
+        member_address.address_line_two as address_line_two,
+        member_address.address_line_three as address_line_three,
+        member_address.postal_code as postal_code,
+        member_address.city as city,
+        member_address.district as district,
+        member.phone_number as phone_number,
+        member.access_level as access_level,
+        member.otp_mode as otp_mode,
+        member.identity_verified as identity_verified,
+        member.identification_gov_issued_number as identification_gov_issued_number,
+        member.identification_driver_licence_number as identification_driver_licence_number,
+        member.identification_health_insurance_number as identification_health_insurance_number,
+        member.carrier_number as carrier_number,
+        member.allowed_login_status as allowed_login_status,
+        member.last_login as last_login,
+        member.created_at as created_at
+      FROM member
+      LEFT JOIN member_address
+      ON member.id = member_address.member_id
+      WHERE member.id = $1
+    `
+
+    try {
+      const { rows } = await client.query(sql, [id])
+      return querySuccessHandler(rows)
+
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getByIdWithAddressInfo Error ${(e as string).toString()}` })
+      return false
+    }
+  }
 }
 
 export default Member
