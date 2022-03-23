@@ -4,6 +4,7 @@ import { Member } from '~/src/models/pg'
 import { HttpReq, HttpRes } from '../utils/http'
 import authMiddleware from '../middleware/auth'
 import Firebase from '~/src/utils/firebase'
+import MemberAddress from '~/src/models/pg/controllers/member_address'
 
 const router: Router = express.Router()
 
@@ -35,7 +36,7 @@ router.get('/', authMiddleware, async (req, res) => {
       HttpRes.send200(res, 'success', { data: _rows })
       return
     }
-    _rows = await Member.getById(_userId) || []
+    _rows = await Member.getByIdWithAddressInfo(_userId) || []
     HttpRes.send200(res, 'success', { data: _rows })
     return
   } catch (e: unknown) {
@@ -105,6 +106,29 @@ router.post('/info', authMiddleware, async (req, res) => {
     }
     HttpRes.send200(res, 'success', { data: _result })
     return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.post('/address', authMiddleware, async (req, res) => {
+  try {
+    const _token = HttpReq.getToken(req)
+    const { user_id: member_id } = await Firebase.authenticateToken(_token)
+    const { address_line_one, address_line_two, address_line_three, postal_code, city, district, id } = req.body
+    const _id = String(id)
+    let rows = []
+    if (_id === 'undefined') {
+      rows = await MemberAddress.create({ address_line_one, address_line_two, address_line_three, postal_code, city, district, member_id }) || []
+    } else {
+      rows = await MemberAddress.update({ address_line_one, address_line_two, address_line_three, postal_code, city, district, member_id }) || []
+    }
+    if (rows && rows.length) {
+      HttpRes.send200(res, 'success', { data: rows })
+      return
+    }
+    throw new Error('upsert error')
   } catch (e: unknown) {
     HttpRes.send500(res)
     return
