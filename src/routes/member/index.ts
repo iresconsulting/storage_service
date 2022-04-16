@@ -68,6 +68,74 @@ router.post('/artists', authMiddleware, async (req, res) => {
   }
 })
 
+router.post('/artists/registration', async (req, res) => {
+  try {
+    const _token = HttpReq.getToken(req)
+    const { user_id: userId, email } = await Firebase.authenticateToken(_token)
+    const _isExist = await Member.getByEmail(email)
+    if (!_isExist) {
+      throw new Error('system error')
+    }
+    if (_isExist && _isExist.length) {
+      HttpRes.send400(res, 'account already exist')
+      return
+    }
+    const _result = await Member.create(_token, '', Firebase.Provider.GOOGLE, AppAccessLevel.admin3, email, '', '', '', '')
+    if (!_result || !_result.length) {
+      throw new Error('system error')
+    }
+    HttpRes.send200(res, 'success', { data: _result })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.post('/artists/signIn', async (req, res) => {
+  try {
+    const _token = HttpReq.getToken(req)
+    const { user_id: userId, email } = await Firebase.authenticateToken(_token)
+    const _isExist = await Member.getByEmail(email)
+    if (_isExist && _isExist.length) {
+      const [acc] = _isExist
+      if (acc.access_level === AppAccessLevel.admin3) {
+        HttpRes.send200(res, 'success', { data: _isExist })
+        return
+      }
+    }
+    HttpRes.send400(res)
+      return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.post('/artists/verification', authMiddleware, async (req, res) => {
+  try {
+    const _token = HttpReq.getToken(req)
+    const { user_id: userId, email } = await Firebase.authenticateToken(_token)
+    const _isExist = await Member.getByEmail(email)
+    if (_isExist && _isExist.length) {
+      const [acc] = _isExist
+      if (acc.access_level === AppAccessLevel.admin3) {
+        HttpRes.send200(res, 'success', { data: _isExist })
+        return
+      } else {
+        HttpRes.send400(res)
+        return
+      }
+    } else {
+      HttpRes.send400(res)
+      return
+    }
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
 router.post('/verification', authMiddleware, async (req, res) => {
   try {
     const _token = HttpReq.getToken(req)
