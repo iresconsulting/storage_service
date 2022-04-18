@@ -5,6 +5,9 @@ import { createTransactionTable, dropTransactionTable } from '../models/transact
 import { createAdminWhitelistTable, dropAdminWhitelistTable } from '../models/admin_whitelist'
 import { createMemberTable, dropMemberTable } from '../models/member'
 import { createAccessLevelTable, defineAccessLevel } from '../models/access_level'
+import { createMemberAwardTable } from '../models/member_award'
+import { createMemberInfoTable } from '../models/member_info'
+import { createMemberAddressTable } from '../models/member_address'
 
 // import Member from '../controllers/member'
 
@@ -23,18 +26,22 @@ import { createAccessLevelTable, defineAccessLevel } from '../models/access_leve
 
 await init()
 
-await createAccessLevelTable()
-await defineAccessLevel()
+// await createAccessLevelTable()
+// await defineAccessLevel()
 
-await dropAdminWhitelistTable()
-await dropTransactionTable()
-await dropWalletTable()
-await dropMemberTable()
+// await dropAdminWhitelistTable()
+// await dropTransactionTable()
+// await dropWalletTable()
+// await dropMemberTable()
 
-await createAdminWhitelistTable()
-await createMemberTable()
-await createWalletTable()
-await createTransactionTable()
+// await createAdminWhitelistTable()
+// await createMemberTable()
+// await createWalletTable()
+// await createTransactionTable()
+
+await createMemberAddressTable()
+await createMemberInfoTable()
+await createMemberAwardTable()
 
 // await Member.create('', '', 'local', '6', 'root1', 'root1')
 // await Member.create('', '', 'local', '5', 'admin1', 'admin1')
