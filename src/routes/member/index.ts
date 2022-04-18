@@ -5,6 +5,8 @@ import { HttpReq, HttpRes } from '../utils/http'
 import authMiddleware from '../middleware/auth'
 import Firebase from '~/src/utils/firebase'
 import MemberAddress from '~/src/models/pg/controllers/member_address'
+import MemberInfo from '~/src/models/pg/controllers/member_info'
+import MemberAward, { AwardType } from '~/src/models/pg/controllers/member_award'
 
 const router: Router = express.Router()
 
@@ -37,6 +39,67 @@ router.get('/', authMiddleware, async (req, res) => {
       return
     }
     _rows = await Member.getByIdWithAddressInfo(_userId) || []
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.get('/info', authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.query
+    const _userId = String(userId)
+    if (_userId !== 'undefined') {
+      const _memberInfo = await MemberInfo.getAllPagination(_userId)
+      const _awardInfo = await MemberAward.getAllPagination(_userId)
+      if (_memberInfo && _memberInfo.length) {
+        HttpRes.send200(res, 'success', { awards: _awardInfo, info: _memberInfo[0] })
+        return
+      }
+    }
+    HttpRes.send200(res, 'success', { awards: [], info: { name: '', origin: '', birthday: '' } })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.post('/info', authMiddleware, async (req, res) => {
+  try {
+    const { userId, name, origin, birthday } = req.body
+    const _memberInfo = await MemberInfo.getAllPagination(userId)
+    if (_memberInfo && _memberInfo.length) {
+      const _rows = await MemberInfo.update({ member_id: userId, name, origin, birthday }) || []
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    }
+    const _rows = await MemberInfo.create({ member_id: userId, name, origin, birthday }) || []
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.post('/info/award', authMiddleware, async (req, res) => {
+  try {
+    const { userId, name, type, year, itemId } = req.body
+    const _awardInfo = await MemberAward.getAllPagination(itemId)
+    const _type = type as AwardType
+    if (type !== 'expo' || type !== 'award') {
+      HttpRes.send400(res)
+      return
+    }
+    if (_awardInfo && _awardInfo.length) {
+      const _rows = await MemberAward.update({ item_id: itemId, name, type: _type, year }) || []
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    }
+    const _rows = await MemberAward.create({ member_id: userId, name, type: _type, year }) || []
     HttpRes.send200(res, 'success', { data: _rows })
     return
   } catch (e: unknown) {

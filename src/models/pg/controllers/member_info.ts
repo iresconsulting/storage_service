@@ -1,0 +1,87 @@
+import { client } from '..'
+import { querySuccessHandler } from './utils'
+import Logger from '~/src/utils/logger'
+
+namespace MemberInfo {
+  export async function create({
+    name = '',
+    birthday = '',
+    origin = '',
+    member_id
+  }: {
+    name: string,
+    birthday: string,
+    origin: string,
+    member_id: string
+  }): Promise<Array<any> | false> {
+    const sql = `
+      INSERT INTO member_info(name, birthday, origin, member_id)
+      VALUES($1, $2, $3, $4)
+      RETURNING *
+    `
+
+    try {
+      const { rows } = await client.query(sql, [
+        name,
+        birthday,
+        origin,
+        member_id
+      ])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `create Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
+  export async function update({
+    name = '',
+    birthday = '',
+    origin = '',
+    member_id
+  }: {
+    name: string,
+    birthday: string,
+    origin: string,
+    member_id: string
+  }): Promise<Array<any> | false> {
+    const sql = `
+      UPDARE member_info(name, birthday, origin)
+      SET name = $1, birthday = $2, origin = $3
+      WHERE member_id = $4
+      RETURNING *
+    `
+
+    try {
+      const { rows } = await client.query(sql, [
+        name,
+        birthday,
+        origin,
+        member_id
+      ])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `update Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
+  // TODO pagination logic
+  export async function getAllPagination(member_id: string): Promise<Array<any> | false> {
+    const sql = `
+      SELECT *
+      FROM member_info
+      WHERE member_id = $1
+    `
+
+    try {
+      const { rows } = await client.query(sql, [member_id])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getAllPagination Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+}
+
+export default MemberInfo
