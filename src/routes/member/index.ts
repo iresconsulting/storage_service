@@ -77,8 +77,8 @@ router.post('/info', authMiddleware, async (req, res) => {
       return
     }
     const _rows = await MemberInfo.create({ member_id: userId, name, origin, birthday }) || []
-      HttpRes.send200(res, 'success', { data: _rows })
-      return
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
   } catch (e: unknown) {
     HttpRes.send500(res)
     return
