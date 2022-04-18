@@ -7,16 +7,18 @@ namespace MemberInfo {
     name = '',
     birthday = '',
     origin = '',
-    member_id
+    member_id,
+    about = ''
   }: {
     name: string,
     birthday: string,
     origin: string,
-    member_id: string
+    member_id: string,
+    about: string
   }): Promise<Array<any> | false> {
     const sql = `
-      INSERT INTO member_info(name, birthday, origin, member_id)
-      VALUES($1, $2, $3, $4)
+      INSERT INTO member_info(name, birthday, origin, about, member_id)
+      VALUES($1, $2, $3, $4, $5)
       RETURNING *
     `
 
@@ -25,6 +27,7 @@ namespace MemberInfo {
         name,
         birthday,
         origin,
+        about,
         member_id
       ])
       return querySuccessHandler(rows)
@@ -38,17 +41,19 @@ namespace MemberInfo {
     name = '',
     birthday = '',
     origin = '',
-    member_id
+    member_id,
+    about = ''
   }: {
     name: string,
     birthday: string,
     origin: string,
-    member_id: string
+    member_id: string,
+    about: string
   }): Promise<Array<any> | false> {
     const sql = `
-      UPDARE member_info(name, birthday, origin)
-      SET name = $1, birthday = $2, origin = $3
-      WHERE member_id = $4
+      UPDARE member_info(name, birthday, origin, about)
+      SET name = $1, birthday = $2, origin = $3, about = $4
+      WHERE member_id = $5
       RETURNING *
     `
 
@@ -57,6 +62,7 @@ namespace MemberInfo {
         name,
         birthday,
         origin,
+        about,
         member_id
       ])
       return querySuccessHandler(rows)

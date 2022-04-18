@@ -69,14 +69,14 @@ router.get('/info', authMiddleware, async (req, res) => {
 
 router.post('/info', authMiddleware, async (req, res) => {
   try {
-    const { userId, name, origin, birthday } = req.body
+    const { userId, name, origin, birthday, about } = req.body
     const _memberInfo = await MemberInfo.getAllPagination(userId)
     if (_memberInfo && _memberInfo.length) {
-      const _rows = await MemberInfo.update({ member_id: userId, name, origin, birthday }) || []
+      const _rows = await MemberInfo.update({ member_id: userId, name, origin, birthday, about }) || []
       HttpRes.send200(res, 'success', { data: _rows })
       return
     }
-    const _rows = await MemberInfo.create({ member_id: userId, name, origin, birthday }) || []
+    const _rows = await MemberInfo.create({ member_id: userId, name, origin, birthday, about }) || []
     HttpRes.send200(res, 'success', { data: _rows })
     return
   } catch (e: unknown) {

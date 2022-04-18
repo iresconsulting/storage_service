@@ -9,6 +9,7 @@ export async function createMemberInfoTable(): Promise<void | false> {
       name text DEFAULT '',
       origin text DEFAULT '',
       birthday text DEFAULT '',
+      about text DEFAULT '',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       CONSTRAINT fk_member_id
