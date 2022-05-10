@@ -14,9 +14,14 @@ router.post('/registration', async (req, res) => {
   try {
     const _token = HttpReq.getToken(req)
     const { user_id: userId, email } = await Firebase.authenticateToken(_token)
+    const isExist = await Member.getByEmail(email)
+    if (isExist && isExist.length) {
+      HttpRes.send400(res, 'email already registered')
+      return
+    }
     const _result = await Member.create(_token, '', Firebase.Provider.GOOGLE, AppAccessLevel.user, email, '', '', '', '')
     if (!_result) {
-      HttpRes.send400(res)
+      HttpRes.send500(res)
       return
     }
     HttpRes.send200(res, 'success', { data: _result })
