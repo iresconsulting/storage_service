@@ -60,11 +60,11 @@ router.get('/info', authMiddleware, async (req, res) => {
       const _memberInfo = await MemberInfo.getAllPagination(_userId)
       const _awardInfo = await MemberAward.getAllPagination(_userId)
       if (_memberInfo && _memberInfo.length) {
-        HttpRes.send200(res, 'success', { awards: _awardInfo, info: _memberInfo[0] })
+        HttpRes.send200(res, 'success', { data: { awards: _awardInfo, info: _memberInfo[0] } })
         return
       }
     }
-    HttpRes.send200(res, 'success', { awards: [], info: { name: '', origin: '', birthday: '' } })
+    HttpRes.send200(res, 'success', { data: { awards: [], info: { name: '', origin: '', birthday: '' } } })
     return
   } catch (e: unknown) {
     HttpRes.send500(res)
