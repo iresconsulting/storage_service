@@ -51,7 +51,7 @@ namespace MemberInfo {
     about: string
   }): Promise<Array<any> | false> {
     const sql = `
-      UPDARE member_info(name, birthday, origin, about)
+      UPDATE member_info(name, birthday, origin, about)
       SET name = $1, birthday = $2, origin = $3, about = $4
       WHERE member_id = $5
       RETURNING *
