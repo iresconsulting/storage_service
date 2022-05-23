@@ -9,6 +9,7 @@ import indexRouter from './routes/index'
 import adminRouter from './routes/admin'
 import memberRouter from './routes/member'
 import transactionRouter from './routes/transaction'
+import { HttpRes } from './routes/utils/http'
 
 const port = process.env.PORT || 9001
 
@@ -33,7 +34,7 @@ app.use('/public', express.static(__dirname_ + '/public'))
 
 // 403 rest of the routes
 app.use('*', function (req: Request, res: Response, next: Function): void {
-  res.send({ code: 403, message: 'forbidden: [*/member]' })
+  HttpRes.send403(res, 'forbidden: [*/member]')
   return
 })
 
