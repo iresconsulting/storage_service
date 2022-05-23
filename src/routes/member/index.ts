@@ -10,7 +10,7 @@ import MemberAward, { AwardType } from '~/src/models/pg/controllers/member_award
 
 const router: Router = express.Router()
 
-router.post('/registration', async (req, res) => {
+router.post('/user/registration', async (req, res) => {
   try {
     const _token = HttpReq.getToken(req)
     const { user_id: userId, email } = await Firebase.authenticateToken(_token)
@@ -22,6 +22,23 @@ router.post('/registration', async (req, res) => {
     const _result = await Member.create(_token, '', Firebase.Provider.GOOGLE, AppAccessLevel.user, email, '', '', '', '')
     if (!_result) {
       HttpRes.send500(res)
+      return
+    }
+    HttpRes.send200(res, 'success', { data: _result })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.post('/user/verification', authMiddleware, async (req, res) => {
+  try {
+    const _token = HttpReq.getToken(req)
+    const { user_id: userId, email } = await Firebase.authenticateToken(_token)
+    const _result = await Member.updateByField(userId, Member.UserFlagField.access_token, _token)
+    if (!_result) {
+      HttpRes.send400(res)
       return
     }
     HttpRes.send200(res, 'success', { data: _result })
@@ -173,7 +190,7 @@ router.post('/artists/signIn', async (req, res) => {
       }
     }
     HttpRes.send400(res)
-      return
+    return
   } catch (e: unknown) {
     HttpRes.send500(res)
     return
@@ -198,23 +215,6 @@ router.post('/artists/verification', authMiddleware, async (req, res) => {
       HttpRes.send400(res)
       return
     }
-  } catch (e: unknown) {
-    HttpRes.send500(res)
-    return
-  }
-})
-
-router.post('/verification', authMiddleware, async (req, res) => {
-  try {
-    const _token = HttpReq.getToken(req)
-    const { user_id: userId, email } = await Firebase.authenticateToken(_token)
-    const _result = await Member.updateByField(userId, Member.UserFlagField.access_token, _token)
-    if (!_result) {
-      HttpRes.send400(res)
-      return
-    }
-    HttpRes.send200(res, 'success', { data: _result })
-    return
   } catch (e: unknown) {
     HttpRes.send500(res)
     return
