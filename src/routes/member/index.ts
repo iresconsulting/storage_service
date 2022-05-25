@@ -130,7 +130,7 @@ router.post('/info/award', authMiddleware, async (req, res) => {
   }
 })
 
-router.get('/artists', authMiddleware, async (req, res) => {
+router.get('/artists', async (req, res) => {
   try {
     const _rows = await Member.getByAccessLevelAndWalletInfo([AppAccessLevel.admin3, AppAccessLevel.admin3]) || []
     HttpRes.send200(res, 'success', { data: _rows })
