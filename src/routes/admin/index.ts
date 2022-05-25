@@ -60,12 +60,11 @@ router.post('/member', authMiddleware, async (req, res) => {
       return
     }
     const _isExist = await Member.getByEmail(email)
-    
     if (_isExist && _isExist.length > 0) {
-      HttpRes.send400(res)
+      HttpRes.send400(res, 'email already exist')
       return
     }
-    const _rows = await Member.create('', '', '', accessLevel, email, '', '', '', '')    
+    const _rows = await Member.create('', '', '', accessLevel, email, '', '', '', '')
     if (!_rows) {
       HttpRes.send400(res)
       return
@@ -105,7 +104,7 @@ router.post('/verification', authMiddleware, async (req, res) => {
 
 router.get('/whitelist', async (req, res) => {
   try {
-    const _rows = await AdminWhiteList.getAllPagination()    
+    const _rows = await AdminWhiteList.getAllPagination()
     if (!_rows) {
       HttpRes.send400(res)
       return
@@ -131,12 +130,12 @@ router.post('/whitelist', async (req, res) => {
       return
     }
     const _isExist = await AdminWhiteList.getByEmail(email)
-    
+
     if (_isExist && _isExist.length > 0) {
       HttpRes.send400(res)
       return
     }
-    const _rows = await AdminWhiteList.create(email, accessLevel)    
+    const _rows = await AdminWhiteList.create(email, accessLevel)
     if (!_rows) {
       HttpRes.send400(res)
       return
@@ -152,7 +151,6 @@ router.post('/whitelist', async (req, res) => {
 router.post('/creation', async (req, res) => {
   try {
     const _token = HttpReq.getToken(req)
-    
     const { user_id: userId, email } = await Firebase.authenticateToken(_token)
     const _rows = await AdminWhiteList.getByEmail(email)
     if (!_rows || _rows.length === 0) {
@@ -161,9 +159,9 @@ router.post('/creation', async (req, res) => {
     }
     const { access_level } = _rows[0]
     const _isExist = await Member.getByEmail(email)
-    
+
     if (!_isExist || _isExist.length === 0) {
-      const _result = await Member.create('', '', Firebase.Provider.GOOGLE, access_level, email, '', '', '', '')      
+      const _result = await Member.create('', '', Firebase.Provider.GOOGLE, access_level, email, '', '', '', '')
       if (!_result) {
         HttpRes.send400(res)
         return
