@@ -40,6 +40,9 @@ router.post('/user/verification', authMiddleware, async (req, res) => {
     let _userId = ''
     if (isExist && isExist.length) {
       _userId = isExist[0].id
+    } else {
+      HttpRes.send400(res)
+      return
     }
     const _result = await Member.updateByField(_userId, Member.UserFlagField.access_token, _token)
     if (!_result) {
