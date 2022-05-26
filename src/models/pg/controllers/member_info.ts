@@ -88,6 +88,21 @@ namespace MemberInfo {
       return false
     }
   }
+
+  export async function getAll(): Promise<Array<any> | false> {
+    const sql = `
+      SELECT *
+      FROM member_info
+    `
+
+    try {
+      const { rows } = await client.query(sql)
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getAll Error ${(e as string).toString()}` })
+      return false
+    }
+  }
 }
 
 export default MemberInfo
