@@ -36,7 +36,12 @@ router.post('/user/verification', authMiddleware, async (req, res) => {
   try {
     const _token = HttpReq.getToken(req)
     const { user_id: userId, email } = await Firebase.authenticateToken(_token)
-    const _result = await Member.updateByField(userId, Member.UserFlagField.access_token, _token)
+    const isExist = await Member.getByEmail(email)
+    let _userId = ''
+    if (isExist && isExist.length) {
+      _userId = isExist[0].id
+    }
+    const _result = await Member.updateByField(_userId, Member.UserFlagField.access_token, _token)
     if (!_result) {
       HttpRes.send400(res)
       return
@@ -132,7 +137,8 @@ router.post('/info/award', authMiddleware, async (req, res) => {
 
 router.get('/artists', async (req, res) => {
   try {
-    const _rows = await Member.getByAccessLevelAndWalletInfo([AppAccessLevel.admin3, AppAccessLevel.admin3]) || []
+    // const _rows = await Member.getByAccessLevelAndWalletInfo([AppAccessLevel.admin3, AppAccessLevel.admin3]) || []
+    const _rows = await MemberInfo.getAll()
     HttpRes.send200(res, 'success', { data: _rows })
     return
   } catch (e: unknown) {
