@@ -60,4 +60,20 @@ router.post('/', async (req, res) => {
   }
 })
 
+router.post('/checkout', async (req, res) => {
+  try {
+    const { id } = req.body
+    const _rows = await Transaction.updateStatusById(id, true)
+    if (_rows) {
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    }
+    HttpRes.send500(res)
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
 export default router
