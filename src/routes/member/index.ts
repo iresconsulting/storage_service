@@ -138,9 +138,19 @@ router.post('/info/award', authMiddleware, async (req, res) => {
   }
 })
 
-router.get('/artists', async (req, res) => {
+router.get('/artists', authMiddleware, async (req, res) => {
   try {
-    // const _rows = await Member.getByAccessLevelAndWalletInfo([AppAccessLevel.admin3, AppAccessLevel.admin3]) || []
+    const _rows = await Member.getByAccessLevelAndWalletInfo([AppAccessLevel.admin3, AppAccessLevel.admin3]) || []
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.get('/artists/info', async (req, res) => {
+  try {
     const _rows = await MemberInfo.getAll()
     HttpRes.send200(res, 'success', { data: _rows })
     return
