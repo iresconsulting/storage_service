@@ -129,6 +129,22 @@ namespace MemberInfo {
       return false
     }
   }
+
+  export async function getById(id: string): Promise<Array<any> | false> {
+    const sql = `
+      SELECT *
+      FROM member_info
+      WHERE member_id = $1
+    `
+
+    try {
+      const { rows } = await client.query(sql, [id])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getAll Error ${(e as string).toString()}` })
+      return false
+    }
+  }
 }
 
 export default MemberInfo

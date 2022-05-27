@@ -163,7 +163,14 @@ router.get('/artists', authMiddleware, async (req, res) => {
 
 router.get('/artists/info', async (req, res) => {
   try {
-    const _rows = await MemberInfo.getAll()
+    const { id } = req.query
+    const _id = String(id)
+    let _rows = []
+    if (_id === 'undefined') {
+      _rows = await MemberInfo.getAll() || []
+    } else {
+      _rows = await MemberInfo.getById(_id) || []
+    }
     HttpRes.send200(res, 'success', { data: _rows })
     return
   } catch (e: unknown) {
