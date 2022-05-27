@@ -170,6 +170,8 @@ router.get('/artists/info', async (req, res) => {
       _rows = await MemberInfo.getAll() || []
     } else {
       _rows = await MemberInfo.getById(_id) || []
+      const _awards = await MemberAward.getAllPagination(_id) || []
+      _rows[0].awards = _awards
     }
     HttpRes.send200(res, 'success', { data: _rows })
     return
