@@ -10,6 +10,7 @@ export async function createMemberInfoTable(): Promise<void | false> {
       origin text DEFAULT '',
       birthday text DEFAULT '',
       about text DEFAULT '',
+      avatar text DEFAULT '',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       CONSTRAINT fk_member_id
@@ -37,6 +38,22 @@ export async function dropMemberInfoTable(): Promise<void | false> {
     Logger.generateTimeLog({ label: Logger.Labels.PG, message: 'dropMemberInfoTable success.' })
   } catch (e: unknown) {
     Logger.generateTimeLog({ label: Logger.Labels.PG, message: `dropMemberInfoTable error: ${(e as string).toString()}` })
+    return false
+  }
+}
+
+
+export async function addMemberInfoAvatar(): Promise<void | false> {
+  const sql: string = `
+    ALTER TABLE member_info
+    ADD COLUMN avatar text DEFAULT ''
+  `
+
+  try {
+    await client.query(sql)
+    Logger.generateTimeLog({ label: Logger.Labels.PG, message: 'addMemberInfoAvatar success.' })
+  } catch (e: unknown) {
+    Logger.generateTimeLog({ label: Logger.Labels.PG, message: `addMemberInfoAvatar error: ${(e as string).toString()}` })
     return false
   }
 }

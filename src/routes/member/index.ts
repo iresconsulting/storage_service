@@ -115,6 +115,18 @@ router.post('/info', authMiddleware, async (req, res) => {
   }
 })
 
+router.post('/info/avatar', authMiddleware, async (req, res) => {
+  try {
+    const { avatar, userId } = req.body
+    const _rows = await MemberInfo.updateAvatar({ avatar, member_id: userId })
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
 router.post('/info/award', authMiddleware, async (req, res) => {
   try {
     const { userId, award_name, award_type, award_year, itemId } = req.body

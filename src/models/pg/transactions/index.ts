@@ -6,7 +6,7 @@ import { createAdminWhitelistTable, dropAdminWhitelistTable } from '../models/ad
 import { createMemberTable, dropMemberTable } from '../models/member'
 import { createAccessLevelTable, defineAccessLevel } from '../models/access_level'
 import { createMemberAwardTable } from '../models/member_award'
-import { createMemberInfoTable } from '../models/member_info'
+import { addMemberInfoAvatar, createMemberInfoTable } from '../models/member_info'
 import { createMemberAddressTable } from '../models/member_address'
 
 // import Member from '../controllers/member'
@@ -25,7 +25,6 @@ import { createMemberAddressTable } from '../models/member_address'
 // console.log('SYSTEM_ID:', system._id)
 
 await init()
-
 // await createAccessLevelTable()
 // await defineAccessLevel()
 
@@ -39,11 +38,9 @@ await init()
 // await createWalletTable()
 // await createTransactionTable()
 
-await createMemberAddressTable()
-await createMemberInfoTable()
-await createMemberAwardTable()
-
-// await Member.create('', '', 'local', '6', 'root1', 'root1')
-// await Member.create('', '', 'local', '5', 'admin1', 'admin1')
+// await createMemberAddressTable()
+// await createMemberInfoTable()
+// await createMemberAwardTable()
+// await addMemberInfoAvatar()
 
 process.exit(0)
