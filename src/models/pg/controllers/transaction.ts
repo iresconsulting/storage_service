@@ -152,10 +152,10 @@ namespace Transaction {
         SELECT member.id as uid, member.email as user_email, member.username as user_display, wallet.balance_total as balance, wallet.id as wid
         FROM wallet
         LEFT JOIN member
-        ON wallet.user_id = member.id
+        ON wallet.user_id = member.id AND member.id = $3
       ) sub_q1
       ON transaction.wallet_id = sub_q1.wid
-      WHERE transaction.created_at >= $1 AND transaction.created_at <= $2 AND member.id = $3
+      WHERE transaction.created_at >= $1 AND transaction.created_at <= $2
     `
 
     return queryHandler(sql, [startDateIso, endDateIso, userId])
