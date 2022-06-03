@@ -9,11 +9,10 @@ const router: Router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const { startDate, endDate, userId } = req.query
-    const { info } = req.query
+    const { startDate, endDate, userId, info } = req.query
     const _info = Boolean(info?.toString())
-    const _startDate = startDate?.toString() || moment('2019-01-01').toISOString()
-    const _endDate = endDate?.toString() || moment('2038-12-31').toISOString()
+    const _startDate = startDate ? startDate.toString() : moment('2019-01-01').toISOString()
+    const _endDate = endDate ? endDate.toString() : moment('2038-12-31').toISOString()
     const _userId = String(userId)
 
     if (!DateCustomized.isValid(_startDate) || !DateCustomized.isValid(_endDate)) {
