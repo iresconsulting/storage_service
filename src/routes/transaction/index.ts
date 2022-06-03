@@ -7,7 +7,7 @@ import { HttpRes } from '../utils/http'
 
 const router: Router = express.Router()
 
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { startDate, endDate, userId } = req.query
     const { info } = req.query
