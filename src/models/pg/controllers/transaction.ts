@@ -144,6 +144,23 @@ namespace Transaction {
     return queryHandler(sql, [startDateIso, endDateIso])
   }
 
+  export async function getWithUserInfoInDateRangeByUserId({ userId, startDateIso, endDateIso }: { userId: string, startDateIso: string, endDateIso: string }): Promise<Array<any>> {
+    const sql = `
+      SELECT transaction.id, transaction.tag, transaction.status, transaction.created_at, transaction.amount, transaction.direction, sub_q1.balance as wallet_balance, sub_q1.user_email as user_email, sub_q1.uid as user_id, sub_q1.user_display as user_display
+      FROM transaction
+      LEFT JOIN (
+        SELECT member.id as uid, member.email as user_email, member.username as user_display, wallet.balance_total as balance, wallet.id as wid
+        FROM wallet
+        LEFT JOIN member
+        ON wallet.user_id = member.id
+      ) sub_q1
+      ON transaction.wallet_id = sub_q1.wid
+      WHERE transaction.created_at >= $1 AND transaction.created_at <= $2 AND member.id = $3
+    `
+
+    return queryHandler(sql, [startDateIso, endDateIso, userId])
+  }
+
   export async function deleteById(id: string): Promise<Array<any> | false> {
     const sql = `
       DELETE FROM transaction
@@ -176,7 +193,7 @@ namespace Transaction {
       FROM transaction
       WHERE transaction.created_at >= $1 AND transaction.created_at <= $2
     `
-  
+
     return queryHandler(sql, [startDateIso, endDateIso])
   }
 }

@@ -7,11 +7,12 @@ const router: Router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const { startDate, endDate } = req.query
+    const { startDate, endDate, userId } = req.query
     const { info } = req.query
     const _info = Boolean(info?.toString())
     const _startDate = startDate?.toString() || ''
     const _endDate = endDate?.toString() || ''
+    const _userId = String(userId)
 
     if (!DateCustomized.isValid(_startDate) || !DateCustomized.isValid(_endDate)) {
       HttpRes.send400(res, 'input invalid')
@@ -23,7 +24,9 @@ router.get('/', async (req, res) => {
     }
     const _queryPayload = { startDateIso: _startDate, endDateIso: _endDate }
     let _rows = []
-    if (_info) {
+    if (_userId) {
+      _rows = await Transaction.getWithUserInfoInDateRangeByUserId({ ..._queryPayload, userId: _userId })
+    } else if (_info) {
       _rows = await Transaction.getWithUserInfoInDateRange(_queryPayload)
     } else {
       _rows = await Transaction.getInDateRange(_queryPayload)
