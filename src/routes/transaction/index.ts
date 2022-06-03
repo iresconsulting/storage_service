@@ -1,4 +1,5 @@
 import express, { Router } from 'express'
+import moment from 'moment'
 import { Transaction } from '~/src/models/pg'
 import DateCustomized from '~/src/utils/date'
 import { HttpRes } from '../utils/http'
@@ -10,8 +11,8 @@ router.get('/', async (req, res) => {
     const { startDate, endDate, userId } = req.query
     const { info } = req.query
     const _info = Boolean(info?.toString())
-    const _startDate = startDate?.toString() || ''
-    const _endDate = endDate?.toString() || ''
+    const _startDate = startDate?.toString() || moment('2019-01-01').toISOString()
+    const _endDate = endDate?.toString() || moment('2038-12-31').toISOString()
     const _userId = String(userId)
 
     if (!DateCustomized.isValid(_startDate) || !DateCustomized.isValid(_endDate)) {
