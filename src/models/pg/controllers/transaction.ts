@@ -156,6 +156,8 @@ namespace Transaction {
       ) sub_q1
       ON transaction.wallet_id = sub_q1.wid
       WHERE transaction.created_at >= $1 AND transaction.created_at <= $2
+      ORDER BY transaction.created_at
+      DESC
     `
 
     return queryHandler(sql, [startDateIso, endDateIso, userId])
