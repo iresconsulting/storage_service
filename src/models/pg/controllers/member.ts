@@ -162,7 +162,8 @@ namespace Member {
         member.allowed_login_status as allowed_login_status,
         wallet.balance_total as balance_total,
         member.provider as wallet_address,
-        wallet.id as wallet_id
+        wallet.id as wallet_id,
+        member.credit_level as credit_level
       FROM wallet
       LEFT JOIN member
       ON member.id = wallet.user_id
@@ -281,7 +282,7 @@ namespace Member {
         SET ${flagCurrent} = $2, last_updated = $3
         WHERE id = $1
         RETURNING *
-      `      
+      `
 
       const { rows } = await client.query(sql, [id, value.toString(), genDateNowWithoutLocalOffset()])
       res = rows
