@@ -10,7 +10,7 @@ const router: Router = express.Router()
 router.get('/', async (req, res) => {
   try {
     const { startDate, endDate, userId, info } = req.query
-    const _info = Boolean(info?.toString())
+    const _info = true
     const _startDate = startDate ? startDate.toString() : moment('2019-01-01').toISOString()
     const _endDate = endDate ? endDate.toString() : moment('2038-12-31').toISOString()
     const _userId = String(userId)
@@ -25,7 +25,10 @@ router.get('/', async (req, res) => {
     }
     const _queryPayload = { startDateIso: _startDate, endDateIso: _endDate }
     let _rows = []
-    if (_userId) {
+
+    console.log('here');
+
+    if (_userId !== 'undefined') {
       _rows = await Transaction.getWithUserInfoInDateRangeByUserId({ ..._queryPayload, userId: _userId })
     } else if (_info) {
       _rows = await Transaction.getWithUserInfoInDateRange(_queryPayload)
