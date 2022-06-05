@@ -26,8 +26,6 @@ router.get('/', async (req, res) => {
     const _queryPayload = { startDateIso: _startDate, endDateIso: _endDate }
     let _rows = []
 
-    console.log('here');
-
     if (_userId !== 'undefined') {
       _rows = await Transaction.getWithUserInfoInDateRangeByUserId({ ..._queryPayload, userId: _userId })
     } else if (_info) {
