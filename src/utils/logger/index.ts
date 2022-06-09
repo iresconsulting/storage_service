@@ -9,12 +9,15 @@ namespace Logger {
     HTTP = 'SYSTEM_HTTP',
     JOB = 'SYSTEM_JOB',
     METRICS = 'SYSTEM_METRICS',
-    PUPPETEER = 'MODULE_PUPPETEER'
+    PUPPETEER = 'MOD_PUPPETEER',
+    PG = 'DB_POSTGRES',
+    MONGO = 'DB_MONGO',
+    FIREBASE = 'MOD_FIREBASE'
   }
 
   export function generateTimeLog({ label, message }: { label: Labels, message: string }) {
-    const _timestamp = moment.tz(LOG_TIMEZONE).toISOString()
-    console.log(`${_timestamp} [${label}] ${message}`)
+    const _timestamp = moment.tz(LOG_TIMEZONE).toISOString(true)
+    console.log(`[${_timestamp}] [${label}] ${message}`)
   }
 }
 

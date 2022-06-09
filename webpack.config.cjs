@@ -15,7 +15,8 @@ const commonConfig = {
   devtool: 'inline-source-map',
   mode: 'none',
   entry: {
-    app: './src/index.ts'
+    app: './src/index.ts',
+    db: './src/models/pg/transactions/index.ts'
   },
   output: {
     path: path.join(__dirname, 'dist'),
@@ -41,8 +42,8 @@ const commonConfig = {
       http: require.resolve('http')
     },
     alias: {
-      '@': path.resolve(__dirname, 'src/'),
-      '~': path.resolve(__dirname, 'src/')
+      '@': path.resolve(__dirname, './'),
+      '~': path.resolve(__dirname, './')
     }
   },
   optimization: {
@@ -55,6 +56,9 @@ const commonConfig = {
         }
       })
     ]
+  },
+  experiments: {
+    topLevelAwait: true
   }
 }
 
