@@ -119,6 +119,8 @@ namespace MemberInfo {
     const sql = `
       SELECT *
       FROM member_info
+      ORDER BY name
+      ASC
     `
 
     try {
