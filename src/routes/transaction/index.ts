@@ -15,6 +15,9 @@ router.get('/', async (req, res) => {
     const _endDate = endDate ? endDate.toString() : moment('2038-12-31').toISOString()
     const _userId = String(userId)
 
+    console.log('here');
+
+
     if (!DateCustomized.isValid(_startDate) || !DateCustomized.isValid(_endDate)) {
       HttpRes.send400(res, 'input invalid')
       return
@@ -23,11 +26,18 @@ router.get('/', async (req, res) => {
       HttpRes.send400(res, 'input invalid')
       return
     }
+
+    console.log('here 2');
+
     const _queryPayload = { startDateIso: _startDate, endDateIso: _endDate }
     let _rows = []
 
     if (_userId !== 'undefined') {
+      console.log('here 3');
+
       _rows = await Transaction.getWithUserInfoInDateRangeByUserId({ ..._queryPayload, userId: _userId })
+      console.log('_rows', _rows);
+
     } else if (_info) {
       _rows = await Transaction.getWithUserInfoInDateRange(_queryPayload)
     } else {

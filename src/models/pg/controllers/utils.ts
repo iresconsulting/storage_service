@@ -10,6 +10,7 @@ export async function queryHandler(sql: string, params?: any[]) {
     const { rows } = await client.query(sql, arr)
     return rows
   } catch (e: unknown) {
+    console.log(String(e));
     throw new Error(`${(e as string).toString()}`)
   }
 }
