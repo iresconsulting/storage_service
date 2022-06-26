@@ -211,6 +211,7 @@ router.post('/artists/registration', async (req, res) => {
     if (!_result || !_result.length) {
       throw new Error('system error')
     }
+    await MemberInfo.create({ member_id: userId, name: '', origin: '', birthday: '', about: '' }) || []
     HttpRes.send200(res, 'success', { data: _result })
     return
   } catch (e: unknown) {
