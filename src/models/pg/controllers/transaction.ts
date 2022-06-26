@@ -155,10 +155,6 @@ namespace Transaction {
       ORDER BY transaction.created_at
       DESC
     `
-
-    console.log(sql);
-
-
     return queryHandler(sql, [startDateIso, endDateIso, userId])
   }
 
