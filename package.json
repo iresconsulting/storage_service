@@ -30,6 +30,7 @@
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "decimal.js": "^10.2.1",
+    "discord-webhook-node": "^1.1.8",
     "express": "^4.17.1",
     "firebase-admin": "^10.0.1",
     "mathjs": "^7.5.1",

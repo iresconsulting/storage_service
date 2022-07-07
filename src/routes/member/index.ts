@@ -8,6 +8,7 @@ import MemberAddress from '~/src/models/pg/controllers/member_address'
 import MemberInfo from '~/src/models/pg/controllers/member_info'
 import MemberAward, { AwardType } from '~/src/models/pg/controllers/member_award'
 import PaypalSubProfile from '~/src/models/pg/controllers/paypal_sub_profile'
+import { genSysMsg, sendMessage } from '~/src/utils/discord'
 
 const router: Router = express.Router()
 
@@ -214,6 +215,7 @@ router.post('/artists/registration', async (req, res) => {
     }
     await MemberInfo.create({ member_id: _result[0].id, name: '', origin: '', birthday: '', about: '' }) || []
     await PaypalSubProfile.create(_result[0].id, '', '', '', '', '', '')
+    sendMessage(genSysMsg('User Creation', email))
     HttpRes.send200(res, 'success', { data: _result })
     return
   } catch (e: unknown) {
