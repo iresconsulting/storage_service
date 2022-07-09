@@ -88,8 +88,6 @@ router.get('/info', authMiddleware, async (req, res) => {
       const _memberInfo = await MemberInfo.getAllPagination(_userId)
       const _awardInfo = await MemberAward.getAllPagination(_userId)
       if (_memberInfo && _memberInfo.length) {
-        console.log(_memberInfo[0])
-        console.log(pgArrToArr(_memberInfo[0].category))
         _memberInfo[0].category = pgArrToArr(_memberInfo[0].category)
         HttpRes.send200(res, 'success', { data: { awards: _awardInfo, info: _memberInfo[0] } })
         return
@@ -186,6 +184,13 @@ router.get('/artists/info', async (req, res) => {
     let _rows = []
     if (_id === 'undefined') {
       _rows = await MemberInfo.getAll() || []
+      _rows = _rows.map((item) => {
+        return {
+          ...item,
+          category: item.category && !item.category.includes('NULL') ? pgArrToArr(item.category) : []
+        }
+      })
+
     } else {
       _rows = await MemberInfo.getById(_id) || []
       if (_rows && _rows.length) {
