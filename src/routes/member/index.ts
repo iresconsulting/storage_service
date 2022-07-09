@@ -152,6 +152,18 @@ router.post('/info/award', authMiddleware, async (req, res) => {
   }
 })
 
+router.post('/info/category', async (req, res) => {
+  try {
+    const { category, userId } = req.body
+    const _rows = await MemberInfo.updateCategory({ category, member_id: userId })
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
 router.get('/artists', authMiddleware, async (req, res) => {
   try {
     const _rows = await Member.getByAccessLevelAndWalletInfo([AppAccessLevel.admin3, AppAccessLevel.admin3]) || []

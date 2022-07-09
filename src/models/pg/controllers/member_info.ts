@@ -98,6 +98,32 @@ namespace MemberInfo {
     }
   }
 
+  export async function updateCategory({
+    category,
+    member_id,
+  }: {
+    category: string,
+    member_id: string,
+  }): Promise<Array<any> | false> {
+    const sql = `
+      UPDATE member_info
+      SET category = $1
+      WHERE member_id = $2
+      RETURNING *
+    `
+
+    try {
+      const { rows } = await client.query(sql, [
+        category,
+        member_id
+      ])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `updateAvatar Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
   // TODO pagination logic
   export async function getAllPagination(member_id: string): Promise<Array<any> | false> {
     const sql = `

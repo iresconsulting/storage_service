@@ -6,7 +6,7 @@ import { createAdminWhitelistTable, dropAdminWhitelistTable } from '../models/ad
 import { createMemberTable, dropMemberTable } from '../models/member'
 import { createAccessLevelTable, defineAccessLevel } from '../models/access_level'
 import { createMemberAwardTable } from '../models/member_award'
-import { addMemberInfoAvatar, createMemberInfoTable } from '../models/member_info'
+import { addMemberInfoAvatar, addMemberInfoCategory, createMemberInfoTable } from '../models/member_info'
 import { createMemberAddressTable } from '../models/member_address'
 
 await init()
@@ -16,15 +16,17 @@ await init()
 // await dropWalletTable()
 // await dropMemberTable()
 
-await createAccessLevelTable()
-await defineAccessLevel()
-await createAdminWhitelistTable()
-await createMemberTable()
-await createWalletTable()
-await createTransactionTable()
+// await createAccessLevelTable()
+// await defineAccessLevel()
+// await createAdminWhitelistTable()
+// await createMemberTable()
+// await createWalletTable()
+// await createTransactionTable()
 
-await createMemberAddressTable()
-await createMemberInfoTable()
-await createMemberAwardTable()
+// await createMemberAddressTable()
+// await createMemberInfoTable()
+// await createMemberAwardTable()
+
+await addMemberInfoCategory()
 
 process.exit(0)

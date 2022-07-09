@@ -57,3 +57,18 @@ export async function addMemberInfoAvatar(): Promise<void | false> {
     return false
   }
 }
+
+export async function addMemberInfoCategory(): Promise<void | false> {
+  const sql: string = `
+    ALTER TABLE member_info
+    ADD COLUMN category text DEFAULT ''
+  `
+
+  try {
+    await client.query(sql)
+    Logger.generateTimeLog({ label: Logger.Labels.PG, message: 'addMemberInfoCategory success.' })
+  } catch (e: unknown) {
+    Logger.generateTimeLog({ label: Logger.Labels.PG, message: `addMemberInfoCategory error: ${(e as string).toString()}` })
+    return false
+  }
+}
