@@ -22,6 +22,7 @@ export default async function initPg(): Promise<void> {
     Logger.generateTimeLog({ label: Logger.Labels.PG, message: 'attempting to connect...' })
     client = new Client({
       connectionString,
+      // connectionString: 'postgres://dfxfxkbr:aRKgGYCYe8U9UxS3WhJFRjZzKpik_zle@satao.db.elephantsql.com/dfxfxkbr'
     })
     await client.connect()
     Logger.generateTimeLog({ label: Logger.Labels.PG, message: 'connected.' })
