@@ -31,12 +31,14 @@ export function arrItemToPgArrItem(item: any): string {
 }
 
 export function pgArrToArr(pgArr: string): Array<any> {
-  const match = pgArr.match(/[\w.-]+/g)
-  if (match) {
-    return match.map(Number)
-  } else {
-    return []
-  }
+  let res = pgArr.replace("{", "[");
+  res = res.replace("}", "]");
+  return JSON.parse(res)  //[1, 2, 3, 4]r
+  // const match = pgArr.match(/[\w.-]+/g)
+  // if (match) {
+  //   return match.map(Number)
+  // }
+  // return []
 }
 
 export function pgArrToArr2(pgArr: Array<Array<string>>): Array<any> {

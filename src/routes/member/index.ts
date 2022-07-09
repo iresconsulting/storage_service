@@ -9,6 +9,7 @@ import MemberInfo from '~/src/models/pg/controllers/member_info'
 import MemberAward, { AwardType } from '~/src/models/pg/controllers/member_award'
 import PaypalSubProfile from '~/src/models/pg/controllers/paypal_sub_profile'
 import { genSysMsg, sendMessage } from '~/src/utils/discord'
+import { arrToPgArr, pgArrToArr, pgArrToArr2 } from '~/src/models/pg/utils/helpers'
 
 const router: Router = express.Router()
 
@@ -87,6 +88,9 @@ router.get('/info', authMiddleware, async (req, res) => {
       const _memberInfo = await MemberInfo.getAllPagination(_userId)
       const _awardInfo = await MemberAward.getAllPagination(_userId)
       if (_memberInfo && _memberInfo.length) {
+        console.log(_memberInfo[0])
+        console.log(pgArrToArr(_memberInfo[0].category))
+        _memberInfo[0].category = pgArrToArr(_memberInfo[0].category)
         HttpRes.send200(res, 'success', { data: { awards: _awardInfo, info: _memberInfo[0] } })
         return
       }
