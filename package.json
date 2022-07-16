@@ -33,6 +33,7 @@
     "discord-webhook-node": "^1.1.8",
     "express": "^4.17.1",
     "firebase-admin": "^10.0.1",
+    "imagekit": "^4.1.0",
     "mathjs": "^7.5.1",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",

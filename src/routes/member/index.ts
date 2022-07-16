@@ -10,6 +10,8 @@ import MemberAward, { AwardType } from '~/src/models/pg/controllers/member_award
 import PaypalSubProfile from '~/src/models/pg/controllers/paypal_sub_profile'
 import { genSysMsg, sendMessage } from '~/src/utils/discord'
 import { arrToPgArr, pgArrToArr, pgArrToArr2 } from '~/src/models/pg/utils/helpers'
+import moment from 'moment'
+import ImageKit from 'imagekit'
 
 const router: Router = express.Router()
 
@@ -119,10 +121,18 @@ router.post('/info', authMiddleware, async (req, res) => {
   }
 })
 
+const imagekit = new ImageKit({
+  publicKey: 'public_teDOnhzTMWCZZ4AGiQIjaw2yy+4=',
+  privateKey: 'private_St3OeJ2AP6qBqE4gkp+zyY5u48I=',
+  urlEndpoint: "https://ik.imagekit.io/lrouh8y6a"
+})
+
 router.post('/info/avatar', authMiddleware, async (req, res) => {
   try {
     const { avatar, userId } = req.body
-    const _rows = await MemberInfo.updateAvatar({ avatar, member_id: userId })
+    const fileName = userId + moment().format('YYYYMMDDhh:mm:ss')
+    const response = await imagekit.upload({ file: avatar, fileName })
+    const _rows = await MemberInfo.updateAvatar({ avatar: response?.url, member_id: userId })
     HttpRes.send200(res, 'success', { data: _rows })
     return
   } catch (e: unknown) {
