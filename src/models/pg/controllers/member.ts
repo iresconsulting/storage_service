@@ -344,6 +344,22 @@ namespace Member {
       return false
     }
   }
+
+  export async function updatePlan(id: string, plan: string): Promise<Array<any> | false> {
+    const sql = `
+      UPDATE member
+      SET credit_level = $2
+      WHERE id = $1
+    `
+
+    try {
+      const { rows } = await client.query(sql, [id, plan])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `updatePlan Error ${(e as string).toString()}` })
+      return false
+    }
+  }
 }
 
 export default Member
