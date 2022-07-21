@@ -164,7 +164,7 @@ router.post('/info/award', authMiddleware, async (req, res) => {
   }
 })
 
-router.post('/info/plan', async (req, res) => {
+router.post('/info/plan', authMiddleware, async (req, res) => {
   try {
     const { plan, userId } = req.body
     const _rows = await Member.updatePlan(userId, plan)
