@@ -135,6 +135,22 @@ namespace Member {
     }
   }
 
+  export async function getByGalleryId(id: string): Promise<Array<any> | false> {
+    const sql = `
+      SELECT *
+      FROM member
+      WHERE description = $1
+    `
+
+    try {
+      const { rows } = await client.query(sql, [id])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getByEmail Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
   export async function getByAccessLevel(accessLevelRange: string[]): Promise<Array<any> | false> {
     const sql = `
       SELECT *

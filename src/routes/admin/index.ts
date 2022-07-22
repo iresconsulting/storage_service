@@ -49,7 +49,7 @@ router.get('/member', authMiddleware, async (req, res) => {
 
 router.post('/member', authMiddleware, async (req, res) => {
   try {
-    const { accessLevel, email, action, id, value } = req.body
+    const { accessLevel, email, action, id, value, galleryId } = req.body
     if (action === 'status') {
       const _rows = await Member.updateByField(id, Member.UserFlagField.allowed_login_status, Boolean(value))
       HttpRes.send200(res, 'success', { data: _rows })
@@ -64,7 +64,7 @@ router.post('/member', authMiddleware, async (req, res) => {
       HttpRes.send400(res, 'email already exist')
       return
     }
-    const _rows = await Member.create('', '', '', accessLevel, email, '', '', '', '')
+    const _rows = await Member.create('', '', '', accessLevel, email, '', galleryId, '', '')
     if (!_rows) {
       HttpRes.send400(res)
       return

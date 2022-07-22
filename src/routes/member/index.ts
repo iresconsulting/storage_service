@@ -190,6 +190,13 @@ router.post('/info/category', async (req, res) => {
 
 router.get('/artists', authMiddleware, async (req, res) => {
   try {
+    const { galleryId } = req.query
+    const _galleryId = String(galleryId)
+    if (_galleryId) {
+      const _rows = await Member.getByGalleryId(_galleryId)
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    }
     const _rows = await Member.getByAccessLevelAndWalletInfo([AppAccessLevel.admin3, AppAccessLevel.admin3]) || []
     HttpRes.send200(res, 'success', { data: _rows })
     return
