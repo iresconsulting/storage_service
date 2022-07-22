@@ -192,7 +192,7 @@ router.get('/artists', authMiddleware, async (req, res) => {
   try {
     const { galleryId } = req.query
     const _galleryId = String(galleryId)
-    if (_galleryId) {
+    if (_galleryId !== 'undefined') {
       const _rows = await Member.getByGalleryId(_galleryId)
       HttpRes.send200(res, 'success', { data: _rows })
       return
