@@ -90,7 +90,9 @@ router.get('/info', async (req, res) => {
       const _memberInfo = await MemberInfo.getAllPagination(_userId)
       const _awardInfo = await MemberAward.getAllPagination(_userId) || []
       if (_memberInfo && _memberInfo.length) {
-        _memberInfo[0].category = pgArrToArr(_memberInfo[0].category)
+        if (_memberInfo[0].category) {
+          _memberInfo[0].category = pgArrToArr(_memberInfo[0].category)
+        }
         HttpRes.send200(res, 'success', { data: { awards: _awardInfo, info: _memberInfo[0] } })
         return
       }
