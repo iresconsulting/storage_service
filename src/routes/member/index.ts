@@ -99,8 +99,8 @@ router.get('/info', async (req, res) => {
     }
     HttpRes.send200(res, 'success', { data: { awards: [], info: { name: '', origin: '', birthday: '' } } })
     return
-  } catch (e: unknown) {
-    HttpRes.send500(res)
+  } catch (e: any) {
+    HttpRes.send500(res, String(e))
     return
   }
 })

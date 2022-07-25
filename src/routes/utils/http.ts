@@ -8,7 +8,7 @@ export namespace HttpRes {
   }
 
   export function send500(res: Response, message?: unknown, data?: Record<string | number, any>) {
-    return res.send(new HttpResponse(403, _getSerializedString(message || 'internal server error'), data || {}))
+    return res.send(new HttpResponse(500, _getSerializedString(message || 'internal server error'), data || {}))
   }
 
   export function send403(res: Response, message?: unknown, data?: Record<string | number, any>) {
