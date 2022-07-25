@@ -82,7 +82,7 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 })
 
-router.get('/info', authMiddleware, async (req, res) => {
+router.get('/info', async (req, res) => {
   try {
     const { userId } = req.query
     const _userId = String(userId)
