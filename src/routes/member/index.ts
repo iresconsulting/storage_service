@@ -148,7 +148,7 @@ router.post('/info/award', authMiddleware, async (req, res) => {
     const { userId, award_name, award_type, award_year, itemId } = req.body
     const _awardInfo = await MemberAward.getAllPagination(itemId)
     const _type = award_type as AwardType
-    if (_type !== 'expo' && _type !== 'award') {
+    if (_type !== 'expo' && _type !== 'award' && _type !== 'event') {
       HttpRes.send400(res)
       return
     }

@@ -2,7 +2,7 @@ import { client } from '..'
 import { querySuccessHandler } from './utils'
 import Logger from '~/src/utils/logger'
 
-export type AwardType = 'expo' | 'award'
+export type AwardType = 'expo' | 'award' | 'event'
 
 namespace MemberAward {
   export async function create({
