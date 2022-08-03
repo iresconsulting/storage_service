@@ -145,6 +145,8 @@ namespace MemberInfo {
     const sql = `
       SELECT *
       FROM member_info
+      LEFT JOIN member
+      ON member_info.member_id = member.id
       ORDER BY name
       ASC
     `
