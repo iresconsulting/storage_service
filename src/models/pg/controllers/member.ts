@@ -139,7 +139,9 @@ namespace Member {
     const sql = `
       SELECT *
       FROM member
-      WHERE description = $1
+      LEFT JOIN member_info
+      ON member_info.member_id = member.id
+      WHERE member.description = $1
     `
 
     try {

@@ -190,7 +190,7 @@ router.post('/info/category', async (req, res) => {
   }
 })
 
-router.get('/artists', async (req, res) => {
+router.get('/artists', authMiddleware, async (req, res) => {
   try {
     const { galleryId } = req.query
     const _galleryId = String(galleryId)
@@ -221,7 +221,6 @@ router.get('/artists/info', async (req, res) => {
           category: item.category && !item.category.includes('NULL') ? pgArrToArr(item.category) : []
         }
       })
-
     } else {
       _rows = await MemberInfo.getById(_id) || []
       if (_rows && _rows.length) {
