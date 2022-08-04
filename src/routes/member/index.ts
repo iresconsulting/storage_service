@@ -190,7 +190,7 @@ router.post('/info/category', async (req, res) => {
   }
 })
 
-router.get('/artists', authMiddleware, async (req, res) => {
+router.get('/artists', async (req, res) => {
   try {
     const { galleryId } = req.query
     const _galleryId = String(galleryId)
