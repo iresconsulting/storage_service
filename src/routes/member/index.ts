@@ -389,4 +389,49 @@ router.get('/gallery', async (req, res) => {
   }
 })
 
+router.get('/gallery', async (req, res) => {
+  let _rows = []
+  try {
+    const { galleryId } = req.query
+    const _galleryId = galleryId?.toString() || ''
+    if (!_galleryId) {
+      _rows = await Member.getGalleryInfo() || []
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    }
+    _rows = await Member.getGalleryInfoById(_galleryId) || []
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.post('/gallery', async (req, res) => {
+  let _rows = []
+  try {
+    const { galleryId } = req.query
+    const { name, origin, about, birthday } = req.body
+    const _galleryId = galleryId?.toString() || ''
+    if (!_galleryId) {
+      HttpRes.send400(res)
+      return
+    }
+    const exist = await MemberInfo.getById(_galleryId)
+    if (exist && exist.length) {
+      const _rows = await MemberInfo.update({ name, origin, about, birthday, member_id: _galleryId })
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    } else {
+      const _rows = await MemberInfo.create({ name, origin, about, birthday, member_id: _galleryId })
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    }
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
 export default router
