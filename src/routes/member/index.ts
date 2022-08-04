@@ -370,7 +370,7 @@ router.post('/address', authMiddleware, async (req, res) => {
   }
 })
 
-router.get('/gallery', authMiddleware, async (req, res) => {
+router.get('/gallery', async (req, res) => {
   let _rows = []
   try {
     const { galleryId } = req.query
