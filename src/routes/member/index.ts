@@ -370,4 +370,23 @@ router.post('/address', authMiddleware, async (req, res) => {
   }
 })
 
+router.get('/gallery', authMiddleware, async (req, res) => {
+  let _rows = []
+  try {
+    const { galleryId } = req.query
+    const _galleryId = galleryId?.toString() || ''
+    if (!_galleryId) {
+      _rows = await Member.getGalleryInfo() || []
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    }
+    _rows = await Member.getGalleryInfoById(_galleryId) || []
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
 export default router

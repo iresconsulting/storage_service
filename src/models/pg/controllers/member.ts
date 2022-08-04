@@ -376,6 +376,44 @@ namespace Member {
       return false
     }
   }
+
+  export async function getGalleryInfo(): Promise<Array<any> | false> {
+    const sql = `
+      SELECT *
+      FROM member
+      LEFT JOIN member_info
+      ON member_info.member_id = member.id
+      WHERE access_level = '4'
+    `
+
+    try {
+      const { rows } = await client.query(sql)
+      return querySuccessHandler(rows)
+
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getByAccessLevel Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
+  export async function getGalleryInfoById(id: string): Promise<Array<any> | false> {
+    const sql = `
+      SELECT *
+      FROM member
+      LEFT JOIN member_info
+      ON member_info.member_id = member.id
+      WHERE access_level = '4' AND id = $1
+    `
+
+    try {
+      const { rows } = await client.query(sql, [id])
+      return querySuccessHandler(rows)
+
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getByAccessLevel Error ${(e as string).toString()}` })
+      return false
+    }
+  }
 }
 
 export default Member
