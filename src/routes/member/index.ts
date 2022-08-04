@@ -146,17 +146,17 @@ router.post('/info/avatar', authMiddleware, async (req, res) => {
 router.post('/info/award', authMiddleware, async (req, res) => {
   try {
     const { userId, award_name, award_type, award_year, itemId } = req.body
-    const _awardInfo = await MemberAward.getAllPagination(itemId)
+    // const _awardInfo = await MemberAward.getAllPagination(itemId)
     const _type = award_type as AwardType
     if (_type !== 'expo' && _type !== 'award' && _type !== 'event') {
       HttpRes.send400(res)
       return
     }
-    if (_awardInfo && _awardInfo.length) {
-      const _rows = await MemberAward.update({ item_id: itemId, name: award_name, type: _type, year: award_year }) || []
-      HttpRes.send200(res, 'success', { data: _rows })
-      return
-    }
+    // if (_awardInfo && _awardInfo.length) {
+    //   const _rows = await MemberAward.update({ item_id: itemId, name: award_name, type: _type, year: award_year }) || []
+    //   HttpRes.send200(res, 'success', { data: _rows })
+    //   return
+    // }
     const _rows = await MemberAward.create({ member_id: userId, name: award_name, type: _type, year: award_year }) || []
     HttpRes.send200(res, 'success', { data: _rows })
     return
