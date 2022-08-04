@@ -402,7 +402,7 @@ namespace Member {
       FROM member
       LEFT JOIN member_info
       ON member_info.member_id = member.id
-      WHERE access_level = '4' AND id = $1
+      WHERE access_level = '4' AND member.id = $1
     `
 
     try {
