@@ -403,14 +403,18 @@ router.post('/gallery', async (req, res) => {
     if (exist && exist.length) {
       let _rows = await MemberInfo.update({ name, origin, about, birthday, member_id: _galleryId }) || []
       if (avatar) {
-        _rows = await MemberInfo.updateAvatar({ member_id: _galleryId, avatar }) || []
+        const fileName = _galleryId + moment().format('YYYYMMDDhh:mm:ss')
+        const response = await imagekit.upload({ file: avatar, fileName })
+        _rows = await MemberInfo.updateAvatar({ member_id: _galleryId, avatar: response?.url }) || []
       }
       HttpRes.send200(res, 'success', { data: _rows })
       return
     } else {
       let _rows = await MemberInfo.create({ name, origin, about, birthday, member_id: _galleryId })
       if (avatar) {
-        _rows = await MemberInfo.updateAvatar({ member_id: _galleryId, avatar }) || []
+        const fileName = _galleryId + moment().format('YYYYMMDDhh:mm:ss')
+        const response = await imagekit.upload({ file: avatar, fileName })
+        _rows = await MemberInfo.updateAvatar({ member_id: _galleryId, avatar: response?.url }) || []
       }
       HttpRes.send200(res, 'success', { data: _rows })
       return
