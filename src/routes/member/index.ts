@@ -412,7 +412,7 @@ router.post('/gallery', async (req, res) => {
   let _rows = []
   try {
     const { galleryId } = req.query
-    const { name, origin, about, birthday } = req.body
+    const { name, origin, about, birthday, avatar } = req.body
     const _galleryId = galleryId?.toString() || ''
     if (!_galleryId) {
       HttpRes.send400(res)
@@ -420,11 +420,17 @@ router.post('/gallery', async (req, res) => {
     }
     const exist = await MemberInfo.getById(_galleryId)
     if (exist && exist.length) {
-      const _rows = await MemberInfo.update({ name, origin, about, birthday, member_id: _galleryId })
+      let _rows = await MemberInfo.update({ name, origin, about, birthday, member_id: _galleryId }) || []
+      if (avatar) {
+        _rows = await MemberInfo.updateAvatar({ member_id: _galleryId, avatar }) || []
+      }
       HttpRes.send200(res, 'success', { data: _rows })
       return
     } else {
-      const _rows = await MemberInfo.create({ name, origin, about, birthday, member_id: _galleryId })
+      let _rows = await MemberInfo.create({ name, origin, about, birthday, member_id: _galleryId })
+      if (avatar) {
+        _rows = await MemberInfo.updateAvatar({ member_id: _galleryId, avatar }) || []
+      }
       HttpRes.send200(res, 'success', { data: _rows })
       return
     }
