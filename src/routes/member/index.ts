@@ -95,9 +95,12 @@ router.get('/info', async (req, res) => {
         }
         HttpRes.send200(res, 'success', { data: { awards: _awardInfo, info: _memberInfo[0] } })
         return
+      } else if (_awardInfo && _awardInfo.length) {
+        HttpRes.send200(res, 'success', { data: { awards: _awardInfo, info: { name: '', origin: '', birthday: '', about: '' } } })
+        return
       }
     }
-    HttpRes.send200(res, 'success', { data: { awards: [], info: { name: '', origin: '', birthday: '' } } })
+    HttpRes.send200(res, 'success', { data: { awards: [], info: { name: '', origin: '', birthday: '', about: '' } } })
     return
   } catch (e: any) {
     HttpRes.send500(res, String(e))
