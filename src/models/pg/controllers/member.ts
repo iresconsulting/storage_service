@@ -137,7 +137,19 @@ namespace Member {
 
   export async function getByGalleryId(id: string): Promise<Array<any> | false> {
     const sql = `
-      SELECT *
+      SELECT
+        member.id as id,
+        member_info.avatar as avatar,
+        member_info.birthday as birthday,
+        member_info.origin as origin,
+        member_info.about as about,
+        member.email as email,
+        member.username as username,
+        member.credit_level as credit_level,
+        member.created_at as created_at,
+        member.description as description,
+        member.allowed_login_status as allowed_login_status,
+        member.access_level as access_level
       FROM member
       LEFT JOIN member_info
       ON member_info.member_id = member.id
