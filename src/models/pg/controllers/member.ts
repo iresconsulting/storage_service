@@ -139,6 +139,7 @@ namespace Member {
     const sql = `
       SELECT
         member.id as id,
+        member_info.name as name,
         member_info.avatar as avatar,
         member_info.birthday as birthday,
         member_info.origin as origin,
