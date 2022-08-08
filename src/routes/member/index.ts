@@ -146,7 +146,7 @@ router.post('/info/avatar', authMiddleware, async (req, res) => {
   }
 })
 
-router.post('/info/award', authMiddleware, async (req, res) => {
+router.post('/info/award', async (req, res) => {
   try {
     const { userId, award_name, award_type, award_year, itemId } = req.body
     // const _awardInfo = await MemberAward.getAllPagination(itemId)
