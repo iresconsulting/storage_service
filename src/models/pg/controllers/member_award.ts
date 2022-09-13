@@ -50,7 +50,7 @@ namespace MemberAward {
     const sql = `
       UPDATE member_award(name, type, year)
       SET name = $1, type = $2, year = $3
-      WHERE item_id = $4
+      WHERE id = $4
       RETURNING *
     `
 
