@@ -84,6 +84,22 @@ namespace MemberAward {
       return false
     }
   }
+
+  export async function getById(item_id: string): Promise<Array<any> | false> {
+    const sql = `
+      SELECT *
+      FROM member_award
+      WHERE id = $1
+    `
+
+    try {
+      const { rows } = await client.query(sql, [item_id])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getById Error ${(e as string).toString()}` })
+      return false
+    }
+  }
 }
 
 export default MemberAward
