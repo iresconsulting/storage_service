@@ -48,7 +48,7 @@ namespace MemberAward {
     item_id: string
   }): Promise<Array<any> | false> {
     const sql = `
-      UPDATE member_award(name, type, year)
+      UPDATE member_award
       SET name = $1, type = $2, year = $3
       WHERE id = $4
       RETURNING *
