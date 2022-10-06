@@ -16,11 +16,12 @@ namespace Member {
     password?: string,
     description?: string,
     username?: string,
-    phoneNumber?: string
+    phoneNumber?: string,
+    allowed_login_status?: boolean
   ): Promise<Array<any> | false> {
     const sql = `
-      INSERT INTO member(email, password, access_token, refresh_token, provider, access_level, description, username, phone_number)
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      INSERT INTO member(email, password, access_token, refresh_token, provider, access_level, description, username, phone_number, allowed_login_status)
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *
     `
 
@@ -57,7 +58,8 @@ namespace Member {
         accessLevel,
         descriptionMap,
         usernameMap,
-        _phoneNumber
+        _phoneNumber,
+        !!allowed_login_status
       ])
 
       await Wallet.create(rows[0].id)

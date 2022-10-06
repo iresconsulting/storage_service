@@ -263,7 +263,7 @@ router.post('/artists/registration', async (req, res) => {
       HttpRes.send400(res, 'account already exist')
       return
     }
-    const _result = await Member.create(_token, '', Firebase.Provider.GOOGLE, AppAccessLevel.admin3, email, '', '', '', '')
+    const _result = await Member.create(_token, '', Firebase.Provider.GOOGLE, AppAccessLevel.admin3, email, '', '', '', '', false)
     if (!_result || !_result.length) {
       throw new Error('system error')
     }
