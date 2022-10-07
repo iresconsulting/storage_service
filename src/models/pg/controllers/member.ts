@@ -143,7 +143,6 @@ namespace Member {
         member.id as id,
         member_info.name as name,
         member_info.avatar as avatar,
-        member_info.birthday as birthday,
         member_info.origin as origin,
         member_info.about as about,
         member.email as email,
@@ -151,8 +150,7 @@ namespace Member {
         member.credit_level as credit_level,
         member.created_at as created_at,
         member.description as description,
-        member.allowed_login_status as allowed_login_status,
-        member.access_level as access_level
+        member.allowed_login_status as allowed_login_status
       FROM member
       LEFT JOIN member_info
       ON member_info.member_id = member.id
@@ -396,7 +394,17 @@ namespace Member {
 
   export async function getGalleryInfo(): Promise<Array<any> | false> {
     const sql = `
-      SELECT *
+      SELECT
+        member_info.about as about,
+        member.id as id,
+        member.allowed_login_status as allowed_login_status,
+        member_info.avatar as avatar,
+        member_info.category as category,
+        member.description as description,
+        member.email as email,
+        member_info.name as name,
+        member_info.origin as origin,
+        member_info.username as username
       FROM member
       LEFT JOIN member_info
       ON member_info.member_id = member.id

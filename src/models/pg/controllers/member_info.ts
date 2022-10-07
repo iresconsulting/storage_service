@@ -143,7 +143,17 @@ namespace MemberInfo {
 
   export async function getAll(): Promise<Array<any> | false> {
     const sql = `
-      SELECT *
+      SELECT
+        member_info.about as about,
+        member.id as id,
+        member.allowed_login_status as allowed_login_status,
+        member_info.avatar as avatar,
+        member_info.category as category,
+        member.description as description,
+        member.email as email,
+        member_info.name as name,
+        member_info.origin as origin,
+        member_info.username as username
       FROM member_info
       LEFT JOIN member
       ON member_info.member_id = member.id
