@@ -239,18 +239,6 @@ router.get('/artists/info', async (req, res) => {
   }
 })
 
-router.post('/artists', authMiddleware, async (req, res) => {
-  try {
-    const { wallet_address, user_id } = req.body
-    const _rows = await Member.updateByField(user_id, Member.UserFlagField.provider, wallet_address)
-    HttpRes.send200(res, 'success', { data: _rows })
-    return
-  } catch (e: unknown) {
-    HttpRes.send500(res)
-    return
-  }
-})
-
 router.post('/artists/registration', async (req, res) => {
   try {
     const _token = HttpReq.getToken(req)
@@ -349,29 +337,6 @@ router.post('/info', authMiddleware, async (req, res) => {
   }
 })
 
-router.post('/address', authMiddleware, async (req, res) => {
-  try {
-    const _token = HttpReq.getToken(req)
-    const { user_id: member_id } = await Firebase.authenticateToken(_token)
-    const { address_line_one, address_line_two, address_line_three, postal_code, city, district, id } = req.body
-    const _id = String(id)
-    let rows = []
-    if (_id === 'undefined') {
-      rows = await MemberAddress.create({ address_line_one, address_line_two, address_line_three, postal_code, city, district, member_id }) || []
-    } else {
-      rows = await MemberAddress.update({ address_line_one, address_line_two, address_line_three, postal_code, city, district, member_id }) || []
-    }
-    if (rows && rows.length) {
-      HttpRes.send200(res, 'success', { data: rows })
-      return
-    }
-    throw new Error('upsert error')
-  } catch (e: unknown) {
-    HttpRes.send500(res)
-    return
-  }
-})
-
 router.get('/gallery', async (req, res) => {
   let _rows = []
   try {
@@ -392,7 +357,6 @@ router.get('/gallery', async (req, res) => {
 })
 
 router.post('/gallery', async (req, res) => {
-  let _rows = []
   try {
     const { galleryId } = req.query
     const { name, origin, about, birthday, avatar } = req.body

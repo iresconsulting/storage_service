@@ -153,7 +153,7 @@ namespace MemberInfo {
         member.email as email,
         member_info.name as name,
         member_info.origin as origin,
-        member_info.username as username
+        member.username as username
       FROM member_info
       LEFT JOIN member
       ON member_info.member_id = member.id

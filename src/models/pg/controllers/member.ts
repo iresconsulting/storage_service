@@ -404,7 +404,7 @@ namespace Member {
         member.email as email,
         member_info.name as name,
         member_info.origin as origin,
-        member_info.username as username
+        member.username as username
       FROM member
       LEFT JOIN member_info
       ON member_info.member_id = member.id
