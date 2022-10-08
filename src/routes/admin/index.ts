@@ -174,7 +174,7 @@ router.post('/creation', async (req, res) => {
     }
     const { access_level } = _rows[0]
     // admin uses same portal as gallery
-    if (type === 'gallery' && (access_level !== SignInType.gallery || access_level !== SignInType.admin)) {
+    if (type === 'gallery' && (access_level !== SignInType.gallery && access_level !== SignInType.admin)) {
       HttpRes.send400(res)
       return
     }
