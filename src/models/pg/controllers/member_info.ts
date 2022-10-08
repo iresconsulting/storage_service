@@ -129,8 +129,6 @@ namespace MemberInfo {
       SELECT
         member_info.avatar as avatar,
         member_info.category as category,
-        member.description as description,
-        member.email as email,
         member_info.name as name,
         member_info.origin as origin,
         member_info.member_id as member_id,
@@ -152,16 +150,16 @@ namespace MemberInfo {
   export async function getAll(): Promise<Array<any> | false> {
     const sql = `
       SELECT
-        member_info.about as about,
         member.id as id,
         member.allowed_login_status as allowed_login_status,
-        member_info.avatar as avatar,
-        member_info.category as category,
         member.description as description,
         member.email as email,
+        member.username as username,
+        member_info.about as about,
+        member_info.avatar as avatar,
+        member_info.category as category,
         member_info.name as name,
         member_info.origin as origin,
-        member.username as username,
         member_info.is_main as is_main,
         member_info.is_featured as is_featured
       FROM member_info
