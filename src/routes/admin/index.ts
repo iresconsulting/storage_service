@@ -152,8 +152,19 @@ router.post('/whitelist', async (req, res) => {
   }
 })
 
+enum SignInType {
+  gallery = '4',
+  collector = '3',
+  admin = '6'
+}
+
 router.post('/creation', async (req, res) => {
   try {
+    const { type } = req.body
+    if (type !== 'gallery' || type !== 'collector' || type !== 'admin') {
+      HttpRes.send400(res)
+      return
+    }
     const _token = HttpReq.getToken(req)
     const { user_id: userId, email } = await Firebase.authenticateToken(_token)
     const _rows = await AdminWhiteList.getByEmail(email)
@@ -162,6 +173,19 @@ router.post('/creation', async (req, res) => {
       return
     }
     const { access_level } = _rows[0]
+    // admin uses same portal as gallery
+    if (type === 'gallery' && (access_level !== SignInType.gallery || access_level !== SignInType.admin)) {
+      HttpRes.send400(res)
+      return
+    }
+    if (type === 'collector' && access_level !== SignInType.collector) {
+      HttpRes.send400(res)
+      return
+    }
+    if (type === 'admin' && access_level !== SignInType.admin) {
+      HttpRes.send400(res)
+      return
+    }
     const _isExist = await Member.getByEmail(email)
 
     if (!_isExist || _isExist.length === 0) {
