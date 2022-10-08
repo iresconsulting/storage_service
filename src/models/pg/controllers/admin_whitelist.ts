@@ -34,7 +34,7 @@ namespace AdminWhiteList {
         member.id as id
       FROM admin_whitelist
       LEFT JOIN member on admin_whitelist.email = member.email
-      WHERE admin_whitelist.access_level = '6' OR  admin_whitelist.access_level = '4'
+      WHERE admin_whitelist.access_level = '6' OR  admin_whitelist.access_level = '4' OR admin_whitelist.access_level = '3'
       ORDER BY admin_whitelist.last_updated DESC
     `
 
