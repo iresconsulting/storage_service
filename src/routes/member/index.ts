@@ -198,8 +198,12 @@ router.get('/artists', async (req, res) => {
     const { galleryId, collectorId } = req.query
     const _galleryId = String(galleryId)
     const _collectorId = String(collectorId)
-    if (_galleryId !== 'undefined' || _collectorId !== 'undefined') {
-      const _rows = await Member.getByGalleryId(_galleryId || _collectorId)
+    if (_galleryId !== 'undefined') {
+      const _rows = await Member.getByGalleryId(_galleryId)
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    } else if (_collectorId !== 'undefined') {
+      const _rows = await Member.getByGalleryId(_collectorId)
       HttpRes.send200(res, 'success', { data: _rows })
       return
     }
