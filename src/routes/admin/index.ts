@@ -161,7 +161,7 @@ enum SignInType {
 router.post('/creation', async (req, res) => {
   try {
     const { type } = req.body
-    if (type !== 'gallery' || type !== 'collector' || type !== 'admin') {
+    if (type !== 'gallery' && type !== 'collector' && type !== 'admin') {
       HttpRes.send400(res)
       return
     }
