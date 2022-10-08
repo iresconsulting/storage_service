@@ -416,7 +416,7 @@ namespace Member {
       return querySuccessHandler(rows)
 
     } catch (e: unknown) {
-      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getByAccessLevel Error ${(e as string).toString()}` })
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getGalleryInfo Error ${(e as string).toString()}` })
       return false
     }
   }
@@ -435,11 +435,58 @@ namespace Member {
       return querySuccessHandler(rows)
 
     } catch (e: unknown) {
-      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getByAccessLevel Error ${(e as string).toString()}` })
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getGalleryInfoById Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
+  export async function getCollectorInfo(): Promise<Array<any> | false> {
+    const sql = `
+      SELECT
+        member_info.about as about,
+        member.id as id,
+        member.allowed_login_status as allowed_login_status,
+        member_info.avatar as avatar,
+        member_info.category as category,
+        member.description as description,
+        member.email as email,
+        member_info.name as name,
+        member_info.origin as origin,
+        member.username as username
+      FROM member
+      LEFT JOIN member_info
+      ON member_info.member_id = member.id
+      WHERE access_level = '3'
+    `
+
+    try {
+      const { rows } = await client.query(sql)
+      return querySuccessHandler(rows)
+
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getCollectorInfo Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
+  export async function getCollectorInfoById(id: string): Promise<Array<any> | false> {
+    const sql = `
+      SELECT *
+      FROM member
+      LEFT JOIN member_info
+      ON member_info.member_id = member.id
+      WHERE access_level = '3' AND member.id = $1
+    `
+
+    try {
+      const { rows } = await client.query(sql, [id])
+      return querySuccessHandler(rows)
+
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getCollectorInfoById Error ${(e as string).toString()}` })
       return false
     }
   }
 }
 
 export default Member
-

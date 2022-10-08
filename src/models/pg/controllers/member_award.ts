@@ -71,7 +71,11 @@ namespace MemberAward {
   // TODO pagination logic
   export async function getAllPagination(member_id: string): Promise<Array<any> | false> {
     const sql = `
-      SELECT *
+      SELECT
+        name,
+        type,
+        year,
+        id
       FROM member_award
       WHERE member_id = $1
     `

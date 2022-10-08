@@ -195,9 +195,10 @@ router.post('/info/category', async (req, res) => {
 
 router.get('/artists', async (req, res) => {
   try {
-    const { galleryId } = req.query
+    const { galleryId, collectorId } = req.query
     const _galleryId = String(galleryId)
-    if (_galleryId !== 'undefined') {
+    const _collectorId = String(collectorId)
+    if (_galleryId !== 'undefined' || _collectorId !== 'undefined') {
       const _rows = await Member.getByGalleryId(_galleryId)
       HttpRes.send200(res, 'success', { data: _rows })
       return
@@ -310,33 +311,6 @@ router.post('/artists/verification', authMiddleware, async (req, res) => {
   }
 })
 
-router.post('/info', authMiddleware, async (req, res) => {
-  try {
-    const _token = HttpReq.getToken(req)
-    const { user_id: userId } = await Firebase.authenticateToken(_token)
-    const { fieldName, value } = req.body
-    let _fieldName = fieldName
-    switch (fieldName) {
-      case Member.UserFlagField.carrier_number:
-      case Member.UserFlagField.identification_gov_issued_number:
-        break
-      default:
-        HttpRes.send400(res)
-        return
-    }
-    const _result = await Member.updateByField(userId, _fieldName as Member.UserFlagField, value)
-    if (!_result) {
-      HttpRes.send400(res)
-      return
-    }
-    HttpRes.send200(res, 'success', { data: _result })
-    return
-  } catch (e: unknown) {
-    HttpRes.send500(res)
-    return
-  }
-})
-
 router.get('/gallery', async (req, res) => {
   let _rows = []
   try {
@@ -367,6 +341,10 @@ router.post('/gallery', async (req, res) => {
     }
     const exist = await MemberInfo.getById(_galleryId)
     if (exist && exist.length) {
+      if (exist[0].access_level !== AppAccessLevel.admin2) {
+        HttpRes.send400(res)
+        return
+      }
       let _rows = await MemberInfo.update({ name, origin, about, birthday, member_id: _galleryId }) || []
       if (avatar) {
         const fileName = _galleryId + moment().format('YYYYMMDDhh:mm:ss')
@@ -381,6 +359,64 @@ router.post('/gallery', async (req, res) => {
         const fileName = _galleryId + moment().format('YYYYMMDDhh:mm:ss')
         const response = await imagekit.upload({ file: avatar, fileName })
         _rows = await MemberInfo.updateAvatar({ member_id: _galleryId, avatar: response?.url }) || []
+      }
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    }
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.get('/collector', async (req, res) => {
+  let _rows = []
+  try {
+    const { collectorId } = req.query
+    const _collectorId = collectorId?.toString() || ''
+    if (!_collectorId) {
+      _rows = await Member.getGalleryInfo() || []
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    }
+    _rows = await Member.getGalleryInfoById(_collectorId) || []
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.post('/collector', async (req, res) => {
+  try {
+    const { collectorId } = req.query
+    const { name, origin, about, birthday, avatar } = req.body
+    const _collectorId = collectorId?.toString() || ''
+    if (!_collectorId) {
+      HttpRes.send400(res)
+      return
+    }
+    const exist = await MemberInfo.getById(_collectorId)
+    if (exist && exist.length) {
+      if (exist[0].access_level !== AppAccessLevel.admin1) {
+        HttpRes.send400(res)
+        return
+      }
+      let _rows = await MemberInfo.update({ name, origin, about, birthday, member_id: _collectorId }) || []
+      if (avatar) {
+        const fileName = _collectorId + moment().format('YYYYMMDDhh:mm:ss')
+        const response = await imagekit.upload({ file: avatar, fileName })
+        _rows = await MemberInfo.updateAvatar({ member_id: _collectorId, avatar: response?.url }) || []
+      }
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    } else {
+      let _rows = await MemberInfo.create({ name, origin, about, birthday, member_id: _collectorId })
+      if (avatar) {
+        const fileName = _collectorId + moment().format('YYYYMMDDhh:mm:ss')
+        const response = await imagekit.upload({ file: avatar, fileName })
+        _rows = await MemberInfo.updateAvatar({ member_id: _collectorId, avatar: response?.url }) || []
       }
       HttpRes.send200(res, 'success', { data: _rows })
       return
