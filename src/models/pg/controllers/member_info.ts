@@ -124,10 +124,18 @@ namespace MemberInfo {
     }
   }
 
-  // TODO pagination logic
-  export async function getAllPagination(member_id: string): Promise<Array<any> | false> {
+  export async function getById(member_id: string): Promise<Array<any> | false> {
     const sql = `
-      SELECT *
+      SELECT
+        member_info.avatar as avatar,
+        member_info.category as category,
+        member.description as description,
+        member.email as email,
+        member_info.name as name,
+        member_info.origin as origin,
+        member_info.member_id as member_id,
+        member_info.is_main as is_main,
+        member_info.is_featured as is_featured
       FROM member_info
       WHERE member_id = $1
     `
@@ -136,7 +144,7 @@ namespace MemberInfo {
       const { rows } = await client.query(sql, [member_id])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
-      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getAllPagination Error ${(e as string).toString()}` })
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getById Error ${(e as string).toString()}` })
       return false
     }
   }
@@ -153,7 +161,9 @@ namespace MemberInfo {
         member.email as email,
         member_info.name as name,
         member_info.origin as origin,
-        member.username as username
+        member.username as username,
+        member_info.is_main as is_main,
+        member_info.is_featured as is_featured
       FROM member_info
       LEFT JOIN member
       ON member_info.member_id = member.id
@@ -170,18 +180,54 @@ namespace MemberInfo {
     }
   }
 
-  export async function getById(id: string): Promise<Array<any> | false> {
+  export async function updateMain({
+    value,
+    member_id,
+  }: {
+    value: boolean,
+    member_id: string,
+  }): Promise<Array<any> | false> {
     const sql = `
-      SELECT *
-      FROM member_info
-      WHERE member_id = $1
+      UPDATE member_info
+      SET is_main = $1
+      WHERE member_id = $2
+      RETURNING *
     `
 
     try {
-      const { rows } = await client.query(sql, [id])
+      const { rows } = await client.query(sql, [
+        value,
+        member_id
+      ])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
-      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getAll Error ${(e as string).toString()}` })
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `updateMain Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
+  export async function updateFeatured({
+    value,
+    member_id,
+  }: {
+    value: boolean,
+    member_id: string,
+  }): Promise<Array<any> | false> {
+    const sql = `
+      UPDATE member_info
+      SET is_featured = $1
+      WHERE member_id = $2
+      RETURNING *
+    `
+
+    try {
+      const { rows } = await client.query(sql, [
+        value,
+        member_id
+      ])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `updateFeatured Error ${(e as string).toString()}` })
       return false
     }
   }

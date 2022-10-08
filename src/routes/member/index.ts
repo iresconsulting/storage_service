@@ -87,7 +87,7 @@ router.get('/info', async (req, res) => {
     const { userId } = req.query
     const _userId = String(userId)
     if (_userId !== 'undefined') {
-      const _memberInfo = await MemberInfo.getAllPagination(_userId)
+      const _memberInfo = await MemberInfo.getById(_userId)
       const _awardInfo = await MemberAward.getAllPagination(_userId) || []
       if (_memberInfo && _memberInfo.length) {
         if (_memberInfo[0].category) {
@@ -111,7 +111,7 @@ router.get('/info', async (req, res) => {
 router.post('/info', authMiddleware, async (req, res) => {
   try {
     const { userId, name, origin, birthday, about } = req.body
-    const _memberInfo = await MemberInfo.getAllPagination(userId)
+    const _memberInfo = await MemberInfo.getById(userId)
     if (_memberInfo && _memberInfo.length) {
       const _rows = await MemberInfo.update({ member_id: userId, name, origin, birthday, about }) || []
       HttpRes.send200(res, 'success', { data: _rows })
@@ -185,6 +185,30 @@ router.post('/info/category', async (req, res) => {
   try {
     const { category, userId } = req.body
     const _rows = await MemberInfo.updateCategory({ category, member_id: userId })
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.post('/info/status/featured', async (req, res) => {
+  try {
+    const { value, userId } = req.body
+    const _rows = await MemberInfo.updateFeatured({ value, member_id: userId })
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
+router.post('/info/status/main', async (req, res) => {
+  try {
+    const { value, userId } = req.body
+    const _rows = await MemberInfo.updateMain({ value, member_id: userId })
     HttpRes.send200(res, 'success', { data: _rows })
     return
   } catch (e: unknown) {
