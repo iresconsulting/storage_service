@@ -130,10 +130,13 @@ router.post('/whitelist', async (req, res) => {
       HttpRes.send400(res)
       return
     }
-    const _isExist = await AdminWhiteList.getByEmail(email)
+    const [isMember, isInWhitelist] = await Promise.all([
+      Member.getByEmail(email),
+      AdminWhiteList.getByEmail(email)
+    ])
 
-    if (_isExist && _isExist.length > 0) {
-      HttpRes.send400(res)
+    if ((isMember && isMember.length > 0) || (isInWhitelist && isInWhitelist.length > 0)) {
+      HttpRes.send400(res, 'email already exists')
       return
     }
     const _rows = await AdminWhiteList.create(email, accessLevel)
