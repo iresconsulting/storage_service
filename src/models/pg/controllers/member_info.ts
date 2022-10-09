@@ -197,7 +197,7 @@ namespace MemberInfo {
       FROM member_info
       LEFT JOIN member
       ON member_info.member_id = member.id
-      WHERE is_main = true
+      WHERE is_main = true AND allowed_login_status = true
       ORDER BY name
       ASC
     `
@@ -229,7 +229,7 @@ namespace MemberInfo {
       FROM member_info
       LEFT JOIN member
       ON member_info.member_id = member.id
-      WHERE is_featured = true
+      WHERE is_featured = true AND allowed_login_status = true
       ORDER BY name
       ASC
     `
