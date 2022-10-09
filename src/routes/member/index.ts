@@ -242,24 +242,35 @@ router.get('/artists', async (req, res) => {
 
 router.get('/artists/info', async (req, res) => {
   try {
-    const { id } = req.query
+    const { id, type } = req.query
     const _id = String(id)
+    const _type = String(type)
     let _rows = []
-    if (_id === 'undefined') {
-      _rows = await MemberInfo.getAll() || []
-      _rows = _rows.map((item) => {
-        return {
-          ...item,
-          category: item.category && !item.category.includes('NULL') ? pgArrToArr(item.category) : []
-        }
-      })
-    } else {
+    if (!isNaN(Number(id))) {
       _rows = await MemberInfo.getById(_id) || []
       if (_rows && _rows.length) {
+        // get awards
         const _awards = await MemberAward.getAllPagination(_id) || []
         _rows[0].awards = _awards
       }
+      HttpRes.send200(res, 'success', { data: _rows })
+      return
+    } else if (_type === 'main') {
+      _rows = await MemberInfo.getMain() || []
+    } else if (_type === 'featured') {
+      _rows = await MemberInfo.getFeatured() || []
+    } else {
+      _rows = await MemberInfo.getAll() || []
     }
+
+    // map category
+    _rows = _rows.map((item) => {
+      return {
+        ...item,
+        category: item.category && !item.category.includes('NULL') ? pgArrToArr(item.category) : []
+      }
+    })
+
     HttpRes.send200(res, 'success', { data: _rows })
     return
   } catch (e: unknown) {
