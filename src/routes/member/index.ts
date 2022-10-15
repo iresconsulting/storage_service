@@ -414,11 +414,11 @@ router.get('/collector', async (req, res) => {
     const { collectorId } = req.query
     const _collectorId = collectorId?.toString() || ''
     if (!_collectorId) {
-      _rows = await Member.getGalleryInfo() || []
+      _rows = await Member.getCollectorInfo() || []
       HttpRes.send200(res, 'success', { data: _rows })
       return
     }
-    _rows = await Member.getGalleryInfoById(_collectorId) || []
+    _rows = await Member.getCollectorInfoById(_collectorId) || []
     HttpRes.send200(res, 'success', { data: _rows })
     return
   } catch (e: unknown) {
