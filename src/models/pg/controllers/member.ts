@@ -195,7 +195,7 @@ namespace Member {
         member.provider as wallet_address,
         wallet.id as wallet_id,
         member.credit_level as credit_level
-      FROM wallet
+      FROM member
       LEFT JOIN member
       ON member.id = wallet.user_id
       WHERE access_level >= $1 AND access_level <= $2
@@ -229,6 +229,30 @@ namespace Member {
 
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getByAccessLevelAndWalletInfo Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
+  export async function getArtists() {
+    const sql = `
+      SELECT
+          member.id as id,
+          member.email as email,
+          member.last_login as last_login,
+          member.created_at as created_at,
+          member.allowed_login_status as allowed_login_status,
+          member.credit_level as credit_level,
+          member.description as description
+        FROM member
+        WHERE access_level = '5'
+    `
+
+    try {
+      const { rows } = await client.query(sql)
+      return querySuccessHandler(rows)
+
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getArtists Error ${(e as string).toString()}` })
       return false
     }
   }
