@@ -68,8 +68,8 @@ router.get('/', authMiddleware, async (req, res) => {
     const { userId } = req.query
     const _userId = userId?.toString() || ''
     if (!_userId) {
-      // get regular users (1-4)
-      _rows = await Member.getByAccessLevel([AppAccessLevel.guest, AppAccessLevel.admin2]) || []
+      // get regular users (1-2)
+      _rows = await Member.getByAccessLevel([AppAccessLevel.guest, AppAccessLevel.user]) || []
       HttpRes.send200(res, 'success', { data: _rows })
       return
     }
