@@ -231,7 +231,7 @@ router.get('/artists', async (req, res) => {
       HttpRes.send200(res, 'success', { data: _rows })
       return
     }
-    const _rows = await Member.getByAccessLevelAndWalletInfo([AppAccessLevel.admin3, AppAccessLevel.admin3]) || []
+    const _rows = await Member.getArtists() || []
     HttpRes.send200(res, 'success', { data: _rows })
     return
   } catch (e: unknown) {

@@ -183,62 +183,11 @@ namespace Member {
     }
   }
 
-  export async function getByAccessLevelAndWalletInfo(accessLevelRange: string[]): Promise<Array<any> | false> {
-    const sql = `
-      SELECT
-        member.id as id,
-        member.email as email,
-        member.last_login as last_login,
-        member.created_at as created_at,
-        member.allowed_login_status as allowed_login_status,
-        wallet.balance_total as balance_total,
-        member.provider as wallet_address,
-        wallet.id as wallet_id,
-        member.credit_level as credit_level
-      FROM member
-      LEFT JOIN member
-      ON member.id = wallet.user_id
-      WHERE access_level >= $1 AND access_level <= $2
-    `
-
-    const sql2 = `
-      SELECT amount, member_id
-      FROM transaction
-    `
-
-    try {
-      const { rows } = await client.query(sql, [Number(accessLevelRange[0]), Number(accessLevelRange[1])])
-
-      const { rows: rows2 } = await client.query(sql2)
-      const _rows = rows.map((row) => {
-        return {
-          ...row,
-          cumulative_earnings: rows2
-            .filter((row2) => row2.member_id === row.id)
-            .reduce((acc, curr) => {
-              if (curr.direction) {
-                acc += Number(curr.amount)
-              } else {
-                acc -= Number(curr.amount)
-              }
-              return acc
-            }, 0) || 0
-        }
-      })
-      return querySuccessHandler(_rows)
-
-    } catch (e: unknown) {
-      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getByAccessLevelAndWalletInfo Error ${(e as string).toString()}` })
-      return false
-    }
-  }
-
   export async function getArtists() {
     const sql = `
       SELECT
           member.id as id,
           member.email as email,
-          member.last_login as last_login,
           member.created_at as created_at,
           member.allowed_login_status as allowed_login_status,
           member.credit_level as credit_level,
