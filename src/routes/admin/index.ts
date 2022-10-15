@@ -140,6 +140,7 @@ router.post('/whitelist', async (req, res) => {
       return
     }
     const _rows = await AdminWhiteList.create(email, accessLevel)
+    await Member.create('', '', '', accessLevel, email, '', '', '', '', false)
     if (!_rows) {
       HttpRes.send400(res)
       return
