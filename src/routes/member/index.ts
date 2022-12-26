@@ -93,6 +93,9 @@ router.get('/info', async (req, res) => {
         if (_memberInfo[0].category) {
           _memberInfo[0].category = pgArrToArr(_memberInfo[0].category)
         }
+        if (_memberInfo[0].tag) {
+          _memberInfo[0].tag = pgArrToArr(_memberInfo[0].tag)
+        }
         HttpRes.send200(res, 'success', { data: { awards: _awardInfo, info: _memberInfo[0] } })
         return
       } else if (_awardInfo && _awardInfo.length) {
