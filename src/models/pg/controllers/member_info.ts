@@ -119,7 +119,7 @@ namespace MemberInfo {
       ])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
-      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `updateAvatar Error ${(e as string).toString()}` })
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `updateCategory Error ${(e as string).toString()}` })
       return false
     }
   }
@@ -134,7 +134,8 @@ namespace MemberInfo {
         member_info.about as about,
         member_info.member_id as member_id,
         member_info.is_main as is_main,
-        member_info.is_featured as is_featured
+        member_info.is_featured as is_featured,
+        member_info.tag as tag
       FROM member_info
       WHERE member_id = $1
     `
@@ -156,6 +157,7 @@ namespace MemberInfo {
         member.description as description,
         member.email as email,
         member.username as username,
+        member.access_level as access_level,
         member_info.about as about,
         member_info.avatar as avatar,
         member_info.category as category,
@@ -243,6 +245,72 @@ namespace MemberInfo {
     }
   }
 
+  export async function getFeaturedGalleries(): Promise<Array<any> | false> {
+    const sql = `
+      SELECT
+        member.id as id,
+        member.allowed_login_status as allowed_login_status,
+        member.description as description,
+        member.email as email,
+        member.username as username,
+        member_info.about as about,
+        member_info.avatar as avatar,
+        member_info.category as category,
+        member_info.name as name,
+        member_info.origin as origin,
+        member_info.is_main as is_main,
+        member_info.is_featured as is_featured,
+        member_info.tag as tag
+      FROM member_info
+      LEFT JOIN member
+      ON member_info.member_id = member.id
+      WHERE is_featured = true AND allowed_login_status = true AND access_level = '4'
+      ORDER BY name
+      ASC
+    `
+
+    try {
+      const { rows } = await client.query(sql)
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getFeaturedGalleries Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
+  export async function getMainGalleries(): Promise<Array<any> | false> {
+    const sql = `
+      SELECT
+        member.id as id,
+        member.allowed_login_status as allowed_login_status,
+        member.description as description,
+        member.email as email,
+        member.username as username,
+        member_info.about as about,
+        member_info.avatar as avatar,
+        member_info.category as category,
+        member_info.name as name,
+        member_info.origin as origin,
+        member_info.is_main as is_main,
+        member_info.is_featured as is_featured,
+        member_info.tag as tag
+      FROM member_info
+      LEFT JOIN member
+      ON member_info.member_id = member.id
+      WHERE is_main = true AND allowed_login_status = true AND member.access_level = '4'
+      ORDER BY name
+      ASC
+    `
+
+    try {
+      const { rows } = await client.query(sql)
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getMainGalleries Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
   export async function updateMain({
     value,
     member_id,
@@ -291,6 +359,32 @@ namespace MemberInfo {
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `updateFeatured Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
+  export async function updateTag({
+    value,
+    member_id,
+  }: {
+    value: string,
+    member_id: string,
+  }): Promise<Array<any> | false> {
+    const sql = `
+      UPDATE member_info
+      SET tag = $1
+      WHERE member_id = $2
+      RETURNING *
+    `
+
+    try {
+      const { rows } = await client.query(sql, [
+        value,
+        member_id
+      ])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `updateTag Error ${(e as string).toString()}` })
       return false
     }
   }

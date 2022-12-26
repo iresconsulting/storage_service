@@ -11,6 +11,8 @@ export async function createMemberInfoTable(): Promise<void | false> {
       birthday text DEFAULT '',
       about text DEFAULT '',
       avatar text DEFAULT '',
+      tag text DEFAULT '',
+      category text DEFAULT '',
       is_main boolean DEFAULT false,
       is_featured boolean DEFAULT false,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -193,6 +193,18 @@ router.post('/info/category', async (req, res) => {
   }
 })
 
+router.post('/info/tag', async (req, res) => {
+  try {
+    const { value, userId } = req.body
+    const _rows = await MemberInfo.updateTag({ value, member_id: userId })
+    HttpRes.send200(res, 'success', { data: _rows })
+    return
+  } catch (e: unknown) {
+    HttpRes.send500(res)
+    return
+  }
+})
+
 router.post('/info/status/featured', async (req, res) => {
   try {
     const { value, userId } = req.body
@@ -259,6 +271,10 @@ router.get('/artists/info', async (req, res) => {
       _rows = await MemberInfo.getMain() || []
     } else if (_type === 'featured') {
       _rows = await MemberInfo.getFeatured() || []
+    } else if (_type === 'featured_galleries') {
+      _rows = await MemberInfo.getFeaturedGalleries() || []
+    } else if (_type === 'main_galleries') {
+      _rows = await MemberInfo.getMainGalleries() || []
     } else {
       _rows = await MemberInfo.getAll() || []
     }
@@ -267,7 +283,8 @@ router.get('/artists/info', async (req, res) => {
     _rows = _rows.map((item) => {
       return {
         ...item,
-        category: item.category && !item.category.includes('NULL') ? pgArrToArr(item.category) : []
+        category: item.category && !item.category.includes('NULL') ? pgArrToArr(item.category) : [],
+        tag: item.tag && !item.tag.includes('NULL') ? pgArrToArr(item.tag) : []
       }
     })
 
