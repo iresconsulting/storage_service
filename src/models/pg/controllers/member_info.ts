@@ -135,10 +135,18 @@ namespace MemberInfo {
         member_info.member_id as member_id,
         member_info.is_main as is_main,
         member_info.is_featured as is_featured,
-        member_info.tag as tag
+        member_info.tag as tag,
+        m2.tag as gallery_tag,
+        m2.name as gallery_name,
+        m2.member_id as gallery_id,
+        m2.avatar as gallery_avatar
       FROM member_info
-      WHERE member_id = $1
-    `
+      LEFT JOIN member
+      ON member_info.member_id = member.id
+      LEFT JOIN member_info m2
+      on REGEXP_REPLACE(COALESCE(member.description::character varying, '0'), '[^0-9]*' ,'0')::integer = m2.member_id
+      WHERE member_info.member_id = $1
+      `
 
     try {
       const { rows } = await client.query(sql, [member_id])
@@ -164,7 +172,8 @@ namespace MemberInfo {
         member_info.name as name,
         member_info.origin as origin,
         member_info.is_main as is_main,
-        member_info.is_featured as is_featured
+        member_info.is_featured as is_featured,
+        member_info.tag as tag
       FROM member_info
       LEFT JOIN member
       ON member_info.member_id = member.id

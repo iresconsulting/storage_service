@@ -264,9 +264,16 @@ router.get('/artists/info', async (req, res) => {
     if (!isNaN(Number(id))) {
       _rows = await MemberInfo.getById(_id) || []
       if (_rows && _rows.length) {
-        // get awards
         const _awards = await MemberAward.getAllPagination(_id) || []
         _rows[0].awards = _awards
+        _rows = _rows.map((item) => {
+          return {
+            ...item,
+            category: item.category && !item.category.includes('NULL') ? pgArrToArr(item.category) : [],
+            tag: item.tag && !item.tag.includes('NULL') ? pgArrToArr(item.tag) : [],
+            gallery_tag: item.gallery_tag && !item.gallery_tag.includes('NULL') ? pgArrToArr(item.gallery_tag) : []
+          }
+        })
       }
       HttpRes.send200(res, 'success', { data: _rows })
       return
