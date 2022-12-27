@@ -125,6 +125,17 @@ namespace MemberInfo {
   }
 
   export async function getById(member_id: string): Promise<Array<any> | false> {
+    const fn = `
+    create or replace function cast_to_int(text, integer) returns integer as $$
+    begin
+        return cast($1 as integer);
+    exception
+        when invalid_text_representation then
+            return $2;
+    end;
+    $$ language plpgsql immutable;
+    `
+    await client.query(fn);
     const sql = `
       SELECT
         member_info.avatar as avatar,
@@ -144,7 +155,7 @@ namespace MemberInfo {
       LEFT JOIN member
       ON member_info.member_id = member.id
       LEFT JOIN member_info m2
-      on REGEXP_REPLACE(COALESCE(member.description::character varying, '0'), '[^0-9]*' ,'0')::integer = m2.member_id
+      on cast_to_int(member.description, -1) = m2.member_id
       WHERE member_info.member_id = $1
       `
 
