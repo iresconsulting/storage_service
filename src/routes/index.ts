@@ -62,6 +62,7 @@ router.get('/records', async (req, res) => {
 router.post('/records', async (req, res) => {
   try {
     const { id, name, path, roles } = req.body
+    // TODO upload to cloud
     if (id) {
       const update = await Record.update(id, name, path, roles)
       return HttpRes.send200(res, 'success', update)

@@ -8,6 +8,7 @@ export async function createRecordTable(): Promise<void | false> {
       name text DEFAULT '',
       path text DEFAULT '',
       roles text DEFAULT '',
+      tags text DEFAULT '',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
