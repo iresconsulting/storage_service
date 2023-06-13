@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express'
-import HttpResponse from '~/src/utils/http'
 import { Device } from './device'
 
 export namespace HttpRes {
@@ -7,24 +6,24 @@ export namespace HttpRes {
     return (message as string).toString()
   }
 
-  export function send500(res: Response, message?: unknown, data?: Record<string | number, any>) {
-    return res.send(new HttpResponse(500, _getSerializedString(message || 'internal server error'), data || {}))
+  export function send500(res: Response, message?: unknown, data?: any) {
+    return res.send({ code: 500, msg: _getSerializedString(message || 'internal server error'), data })
   }
 
-  export function send403(res: Response, message?: unknown, data?: Record<string | number, any>) {
-    return res.send(new HttpResponse(403, _getSerializedString(message || 'access denied'), data || {}))
+  export function send403(res: Response, message?: unknown, data?: any) {
+    return res.send({ code: 403, msg: _getSerializedString(message || 'denied access'), data })
   }
 
-  export function send401(res: Response, message?: unknown, data?: Record<string | number, any>) {
-    return res.send(new HttpResponse(401, _getSerializedString(message || 'unauthorized'), data || {}))
+  export function send401(res: Response, message?: unknown, data?: any) {
+    return res.send({ code: 401, msg: _getSerializedString(message || 'unauthorized'), data })
   }
 
-  export function send400(res: Response, message?: unknown, data?: Record<string | number, any>) {
-    return res.send(new HttpResponse(400, _getSerializedString(message || 'payload invalid'), data || {}))
+  export function send400(res: Response, message?: unknown, data?: any) {
+    return res.send({ code: 400, msg: _getSerializedString(message || 'invalid payload'), data })
   }
 
-  export function send200(res: Response, message?: unknown, data?: Record<string | number, any>) {
-    return res.send(new HttpResponse(200, _getSerializedString(message || 'success'), data || {}))
+  export function send200(res: Response, message?: unknown, data?: any) {
+    return res.send({ code: 200, msg: _getSerializedString(message || 'success'), data })
   }
 }
 

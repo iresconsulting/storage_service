@@ -9,7 +9,7 @@
     "watch": "nodemon --exec babel-node ./dist/app.bundle.js",
     "build:dev": "webpack-cli --env config=dev --config webpack.config.cjs -w --progress --color",
     "build": "webpack --env config=prd --config webpack.config.cjs",
-    "db": "cross-env PG_URI=postgres://dwqijjus:MuXrfRyEA4XM1dUomO7AX6maEQrR1F9g@satao.db.elephantsql.com/dwqijjus babel-node ./dist/db.bundle.js"
+    "db": "cross-env PG_URI=postgres://jzralqcb:tsdiLXEW622A6yRd8BwsQt8cAEr-wMXC@satao.db.elephantsql.com/jzralqcb babel-node ./dist/db.bundle.js"
   },
   "dependencies": {
     "@babel/core": "^7.12.10",

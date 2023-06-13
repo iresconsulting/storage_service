@@ -1,11 +1,8 @@
 import { Client, QueryResult } from 'pg'
 import Logger from '~/src/utils/logger'
-import Member from './controllers/member'
-import Transaction from './controllers/transaction'
-import Wallet from './controllers/wallet'
 
 const env = process.env
-const connectionString: string = env.PG_URI || ''
+const connectionString: string = env.PG_URI || 'postgres://jzralqcb:tsdiLXEW622A6yRd8BwsQt8cAEr-wMXC@satao.db.elephantsql.com/jzralqcb'
 
 export let client: Client
 
@@ -19,10 +16,9 @@ export namespace Pg {
 
 export default async function initPg(): Promise<void> {
   try {
-    Logger.generateTimeLog({ label: Logger.Labels.PG, message: 'attempting to connect...' })
+    Logger.generateTimeLog({ label: Logger.Labels.PG, message: 'connecting...' })
     client = new Client({
-      // connectionString,
-      connectionString: 'postgres://dfxfxkbr:aRKgGYCYe8U9UxS3WhJFRjZzKpik_zle@satao.db.elephantsql.com/dfxfxkbr'
+      connectionString,
     })
     await client.connect()
     Logger.generateTimeLog({ label: Logger.Labels.PG, message: 'connected.' })
@@ -40,10 +36,4 @@ export default async function initPg(): Promise<void> {
       clearTimeout(_timeout)
     }, 3000)
   }
-}
-
-export {
-  Member,
-  Wallet,
-  Transaction
 }
