@@ -6,12 +6,39 @@ import Record from '../models/pg/controllers/record'
 import UserRole from '../models/pg/controllers/user_role'
 import SystemConfig from '../models/pg/controllers/system_config'
 import Member from '../models/pg/controllers/member'
+import { createMemberTable, dropMemberTable } from '../models/pg/models/member'
+import { createUserRoleTable, dropUserRoleTable } from '../models/pg/models/user_role'
+import { createSystemConfigTable, dropSystemConfigTable } from '../models/pg/models/system_config'
+import { createRecordTable, dropRecordTable } from '../models/pg/models/record'
 
 const router: Router = express.Router()
 
 router.get('/health', (req, res) => {
   HttpRes.send200(res)
   return
+})
+
+router.get('/db/init', async (req, res) => {
+  try {
+    console.log('---tx start---');
+    // drop
+    await dropMemberTable()
+    await dropUserRoleTable()
+    await dropSystemConfigTable()
+    await dropRecordTable()
+    // create
+    await Promise.all([
+      createMemberTable(),
+      createUserRoleTable(),
+      createSystemConfigTable(),
+      createRecordTable()
+    ])
+    console.log('---tx end---');
+    HttpRes.send200(res)
+    return
+  } catch {
+    return HttpRes.send500(res)
+  }
 })
 
 router.get('/version', async (req: Request, res: Response) => {

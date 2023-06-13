@@ -1,6 +1,5 @@
 import moment from 'moment-timezone'
 
-
 namespace Logger {
   export const LOG_TIMEZONE = 'Asia/Taipei'
 

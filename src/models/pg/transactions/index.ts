@@ -6,6 +6,8 @@ import { createSystemConfigTable, dropSystemConfigTable } from '../models/system
 import { createRecordTable, dropRecordTable } from '../models/record'
 
 init().then(async () => {
+  console.log('---tx start---');
+  
   // drop
   await dropMemberTable()
   await dropUserRoleTable()
@@ -19,6 +21,8 @@ init().then(async () => {
     createSystemConfigTable(),
     createRecordTable()
   ])
+
+  console.log('---tx end---');
 })
 
 process.exit(0)
