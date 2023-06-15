@@ -26,19 +26,18 @@ router.get('/health', (req, res) => {
 router.get('/db/init', async (req, res) => {
   try {
     console.log('---tx start---');
-    // // drop
-    // await dropMemberTable()
-    // await dropUserRoleTable()
-    // await dropSystemConfigTable()
-    // await dropRecordTable()
-    // // create
-    // await Promise.all([
-    //   createMemberTable(),
-    //   createUserRoleTable(),
-    //   createSystemConfigTable(),
-    //   createRecordTable()
-    // ])
-
+    // drop
+    await dropMemberTable()
+    await dropUserRoleTable()
+    await dropSystemConfigTable()
+    await dropRecordTable()
+    // create
+    await Promise.all([
+      createMemberTable(),
+      createUserRoleTable(),
+      createSystemConfigTable(),
+      createRecordTable()
+    ])
     await SystemConfig.create('root', '1234qwer')
     console.log('---tx end---');
     return HttpRes.send200(res)
