@@ -15,8 +15,11 @@ import Uploader from '../utils/multer'
 import moment from 'moment'
 import jwt from 'jsonwebtoken'
 import { pgArrToArr } from '../models/pg/utils/helpers'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 
 const router: Router = express.Router()
+
+const env = process.env
 
 router.get('/health', (req, res) => {
   HttpRes.send200(res)
@@ -219,7 +222,10 @@ const TOKEN_KEY = 'ires'
 router.post('/login', async (req, res) => {
   try {
     const { usr, pwd } = req.body
-    const admin = req.headers['admin'] || 'false'    
+    if (!pwd || pwd === '') {
+      return HttpRes.send400(res)
+    }
+    const admin = req.headers['admin'] || 'false'
     if (admin && admin === 'true') {
       const getConfig = await SystemConfig.getAll()
       if (getConfig && getConfig.length) {
@@ -255,6 +261,138 @@ router.post('/login', async (req, res) => {
     return HttpRes.send500(res, String(e))
    }
 })
+
+const lineAuth = {
+  hostname: 'https://api.line.me',
+  endpoint: '/oauth2',
+  version: '/v2.1',
+  versionProfile: '/v2'
+}
+
+router.post('/login/line', async (req, res) => {
+  const redirect_uri = req.body.redirect_uri || ''
+  const code: string = req.body.code
+
+  await axios
+    .post(
+      `${lineAuth.hostname}${lineAuth.endpoint}${lineAuth.version}/token`,
+      new URLSearchParams({
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri,
+        client_id: env.LINE_CHANNEL_ID_LOGIN ?? '',
+        client_secret: env.LINE_CHANNEL_SECRET_LOGIN ?? ''
+      }),
+      {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      }
+    )
+    .then((response: AxiosResponse) => {
+      const { access_token, refresh_token } = response.data
+      return HttpRes.send200(res, 'success', { access_token, refresh_token })
+    })
+    .catch((err: AxiosError) => {      
+      return HttpRes.send500(res)
+    })
+})
+
+router.post('/login/line/verification', async (req: Request, res: Response) => {
+  const { access_token, refresh_token } = req.body
+  await axios
+    .get(`${lineAuth.hostname}${lineAuth.endpoint}${lineAuth.version}/verify/`, {
+      params: { access_token }
+    })
+    .then(async () => {
+      // get user profile
+      const profile = await axios.get(`${lineAuth.hostname}${lineAuth.versionProfile}/profile`, {
+        headers: { Authorization: `Bearer ${access_token}` }
+      })
+      return profile
+    })
+    .then(async (response: AxiosResponse) => {
+      // login success
+      const { displayName, userId, pictureUrl, statusMessage } = response.data
+      const findUserResult = await Member.getByUsername(userId)
+      if (findUserResult === false || findUserResult.length === 0) {
+        const list = await Member.getAll()
+        const no = moment().format('YYYYMMDDHHmmss') + (list ? list.length : '0')
+        const insert = await Member.create({ no, name: displayName, username: userId, password: '', roles: '' })
+        if (insert === false) {
+          return HttpRes.send500(res)
+        } else {
+          const getNewUser = await Member.getByUsername(userId)
+          if (getNewUser && getNewUser.length) {
+            const user = getNewUser[0]
+            const token = jwt.sign(
+              { id: user.id, name: user.name, no: user.no, roles: pgArrToArr(user.roles) },
+              TOKEN_KEY,
+              {
+                expiresIn: "7d",
+              }
+            );
+            return HttpRes.send200(res, 'success', { ...user, token })
+          }
+          return HttpRes.send500(res)
+        }
+      } else {
+        const user = findUserResult[0]
+        const updateUserResult = await Member.update({ id: user?.id, name: displayName, password: user?.password, roles: user?.roles })
+        if (!updateUserResult || updateUserResult.length === 0) {
+          return HttpRes.send500(res)
+        }
+        const token = jwt.sign(
+          { id: user.id, name: user.name, no: user.no, roles: pgArrToArr(user.roles) },
+          TOKEN_KEY,
+          {
+            expiresIn: "7d",
+          }
+        );
+        return HttpRes.send200(res, 'success', { ...user, token })
+      }
+    })
+    .catch(async (err: AxiosError) => {
+      if (err.response?.status !== 404) {
+        // use refresh token to get new access token
+        await axios
+          .post(
+            `${lineAuth.hostname}${lineAuth.endpoint}${lineAuth.version}/token`,
+            new URLSearchParams({
+              grant_type: 'refresh_token',
+              client_id: env.LINE_CHANNEL_ID_LOGIN ?? '',
+              client_secret: env.LINE_CHANNEL_SECRET_LOGIN ?? '',
+              refresh_token,
+            })
+          )
+          .then(async (response: AxiosResponse) => {
+            const { access_token, refresh_token } = response.data
+            const profile = await axios.get(`${lineAuth.hostname}${lineAuth.versionProfile}/profile`, {
+              headers: { Authorization: `Bearer ${access_token}` }
+            })
+            const { displayName, userId, pictureUrl, statusMessage } = profile.data
+            const findUserResult = await Member.getByUsername(userId)
+            if (!findUserResult || findUserResult.length === 0) {
+              return HttpRes.send400(res)
+            }
+            const user = findUserResult[0]
+            const token = jwt.sign(
+              { id: user.id, name: user.name, no: user.no, roles: pgArrToArr(user.roles) },
+              TOKEN_KEY,
+              {
+                expiresIn: "7d",
+              }
+            );
+            return HttpRes.send200(res, 'success: token refreshed', { ...user, token, access_token, refresh_token })
+          })
+          .catch((e) => {
+            // need new refresh token
+            return HttpRes.send400(res, 'new token required', { access_token: '', refresh_token: '' })
+          })
+      } else {
+        return HttpRes.send500(res)
+      }
+    })
+})
+
 
 router.get('/verification', async (req, res) => {
   try {

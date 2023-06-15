@@ -9,11 +9,11 @@ export function isRowsExist(rows: Array<any> | undefined): boolean {
 }
 
 export function genDateNowWithoutLocalOffset(): string {
-  return moment(Logger.LOG_TIMEZONE).toISOString()
+  return moment().toISOString()
 }
 
 export function genDateNowWithLocalOffset(): string {
-  return moment(Logger.LOG_TIMEZONE).toISOString(true)
+  return moment().toISOString(true)
 }
 
 export function arrToPgArr(arr: Array<any>): string {
@@ -31,6 +31,9 @@ export function arrItemToPgArrItem(item: any): string {
 }
 
 export function pgArrToArr(pgArr: string): Array<any> {
+  if (!pgArr) {
+    return []
+  }
   let res = pgArr.replace("{", "[");
   res = res.replace("}", "]");
   return JSON.parse(res)  //[1, 2, 3, 4]r

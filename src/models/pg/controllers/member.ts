@@ -85,6 +85,22 @@ namespace Member {
     }
   }
 
+  export async function getByUsername(username: string): Promise<Array<any> | false> {
+    const sql = `
+      SELECT id, no, name, roles, access_token, refresh_token, account_status, last_login, created_at, last_updated
+      FROM member
+      WHERE username = $1
+    `
+
+    try {
+      const { rows } = await client.query(sql, [username])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getByUsername Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
   export async function getByNo(no: string): Promise<Array<any> | false> {
     const sql = `
       SELECT id, no, name, roles, access_token, refresh_token, account_status, last_login, created_at, last_updated
@@ -96,7 +112,7 @@ namespace Member {
       const { rows } = await client.query(sql, [no])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
-      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getByUsername Error ${(e as string).toString()}` })
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getByNo Error ${(e as string).toString()}` })
       return false
     }
   }
