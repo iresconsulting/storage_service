@@ -26,15 +26,24 @@ namespace Record {
   }
 
   // TODO pagination logic
-  export async function getAll(): Promise<Array<any> | false> {
-    const sql = `
+  export async function getAll(name = ''): Promise<Array<any> | false> {
+    let sql = `
       SELECT *
       FROM record
       ORDER BY last_updated DESC
     `
 
+    if (name) {
+      sql = `
+        SELECT *
+        FROM record
+        WHERE name LIKE $1
+        ORDER BY last_updated DESC
+      `
+    }
+
     try {
-      const { rows } = await client.query(sql)
+      const { rows } = await client.query(sql, name ? [`%${name}%`] : [])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getAll Error ${(e as string).toString()}` })

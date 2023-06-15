@@ -9,7 +9,7 @@ export function isRowsExist(rows: Array<any> | undefined): boolean {
 }
 
 export function genDateNowWithoutLocalOffset(): string {
-  return moment(Logger.LOG_TIMEZONE).toISOString(false)
+  return moment(Logger.LOG_TIMEZONE).toISOString()
 }
 
 export function genDateNowWithLocalOffset(): string {

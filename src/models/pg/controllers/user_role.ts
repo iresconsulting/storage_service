@@ -41,7 +41,7 @@ namespace UserRole {
 
   export async function update({ id, name }: any): Promise<Array<any> | false> {
     const sql = `
-      UPDATE member
+      UPDATE user_role
       SET name = $2, last_updated = $3
       WHERE id = $1
       RETURNING *

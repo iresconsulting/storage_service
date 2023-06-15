@@ -1,4 +1,5 @@
 import { Request } from 'express'
+import moment from 'moment'
 import multer from 'multer'
 import { v4 as uuid } from 'uuid'
 import { __dirname_ } from '~/src'
@@ -6,10 +7,10 @@ import { __dirname_ } from '~/src'
 const storage = multer.diskStorage({
   destination(req, file, cb) {
     // path is absolute
-    cb(null, __dirname_ + 'uploads/')
+    cb(null, __dirname_ + '/uploads/')
   },
   filename(req, file, cb) {
-    cb(null, uuid() + file.originalname)
+    cb(null, moment().format('YYYYMMDD_HHmmss_') + file.originalname)
   }
 })
 
@@ -22,22 +23,16 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
       return
     }
     default:
-      cb(null, false)
+      cb(null, true)
   }
 }
 
 namespace Uploader {
-  export const upload = multer({
+  export const instance = multer({
     storage,
     limits: { fileSize: 1024 * 1024 * 5 },
     fileFilter
   })
-
-  export const fieldsDefinitionExample = upload.fields([
-    { name: 'images', maxCount: 12 }
-    // { name: 'cover', maxCount: 1 },
-  ])
-
 }
 
 export default Uploader

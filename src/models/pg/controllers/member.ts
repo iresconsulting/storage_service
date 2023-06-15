@@ -11,12 +11,12 @@ namespace Member {
   ): Promise<Array<any> | false> {
     const sql = `
       INSERT INTO member(no, name, username, password, roles)
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      VALUES($1, $2, $3, $4, $5)
       RETURNING *
     `
 
     try {
-      const find = await getByUsername(username)
+      const find = await getByNo(no)
       if (find !== false && find.length > 1) {
         throw new Error('username already exists')
       }
@@ -35,15 +35,49 @@ namespace Member {
   }
 
   // TODO pagination logic
-  export async function getAll(): Promise<Array<any> | false> {
-    const sql = `
-      SELECT *
+  export async function getAll(payload?: any): Promise<Array<any> | false> {
+    let sql = `
+      SELECT id, no, name, roles, access_token, refresh_token, account_status, last_login, created_at, last_updated
       FROM member
       ORDER BY last_updated DESC
     `
 
+    if (payload?.no && payload?.roles) {
+      sql = `
+        SELECT id, no, name, roles, access_token, refresh_token, account_status, last_login, created_at, last_updated
+        FROM member
+        WHERE no = $1
+        AND roles LIKE $2
+        ORDER BY last_updated DESC
+      `
+    } else if (payload?.no) {
+      sql = `
+        SELECT id, no, name, roles, access_token, refresh_token, account_status, last_login, created_at, last_updated
+        FROM member
+        WHERE no = $1
+        ORDER BY last_updated DESC
+      `
+    } else if (payload?.roles) {
+      sql = `
+        SELECT id, no, name, roles, access_token, refresh_token, account_status, last_login, created_at, last_updated
+        FROM member
+        WHERE roles LIKE $1
+        ORDER BY last_updated DESC
+      `
+    }
+
+    const _payload: any[] = []
+
+    if (payload?.no && payload?.roles) {
+      _payload.push(payload?.no, `%${payload?.roles}%`)
+    } else if (payload?.no) {
+      _payload.push(payload?.no)
+    } else if (payload?.roles) {
+      _payload.push(`%${payload?.roles}%`)
+    }
+
     try {
-      const { rows } = await client.query(sql)
+      const { rows } = await client.query(sql, _payload)
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getAll Error ${(e as string).toString()}` })
@@ -51,32 +85,69 @@ namespace Member {
     }
   }
 
-  export async function getByUsername(email: string): Promise<Array<any> | false> {
+  export async function getByNo(no: string): Promise<Array<any> | false> {
     const sql = `
-      SELECT *
+      SELECT id, no, name, roles, access_token, refresh_token, account_status, last_login, created_at, last_updated
       FROM member
-      WHERE username = $1
+      WHERE no = $1
     `
 
     try {
-      const { rows } = await client.query(sql, [email])
+      const { rows } = await client.query(sql, [no])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
-      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getByEmail Error ${(e as string).toString()}` })
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getByUsername Error ${(e as string).toString()}` })
       return false
     }
   }
 
-  export async function update({ id, no, name, password, roles }: any): Promise<Array<any> | false> {
+  export async function getPasswordByNo(no: string): Promise<Array<any> | false> {
+    const sql = `
+      SELECT password
+      FROM member
+      WHERE no = $1
+    `
+
+    try {
+      const { rows } = await client.query(sql, [no])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getPasswordByUsername Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
+  export async function getByNoAndPwd(no: string, pwdPlainText: string): Promise<Array<any> | false> {
+    const getUser = await getPasswordByNo(no)    
+    if (!getUser || !getUser.length) {
+      return false
+    }
+    const user = getUser[0]
+    if (!user?.password) {
+      return false
+    }
+    const isPwdValid = await bcrypt.compare(pwdPlainText, user?.password)    
+    if (isPwdValid) {
+      const user = await getByNo(no)
+      if (user && user.length) {
+        return user
+      }
+      return false
+    } else {
+      return false
+    }
+  }
+
+  export async function update({ id, name, password, roles }: any): Promise<Array<any> | false> {
     const sql = `
       UPDATE member
-      SET no = $2, name = $3, password = $4, roles = $4, last_updated = $6
+      SET name = $2, password = $3, roles = $4, last_updated = $5
       WHERE id = $1
       RETURNING *
     `
 
     try {
-      const { rows } = await client.query(sql, [id, no, name, password, roles, genDateNowWithoutLocalOffset()])
+      const { rows } = await client.query(sql, [id, name, password, roles, genDateNowWithoutLocalOffset()])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `update Error ${(e as string).toString()}` })
@@ -87,13 +158,13 @@ namespace Member {
   export async function updateAccountStatus({ id, account_status }: any): Promise<Array<any> | false> {
     const sql = `
       UPDATE member
-      SET account_status = $2, last_updated = $3
+      SET account_status = $2
       WHERE id = $1
       RETURNING *
     `
 
     try {
-      const { rows } = await client.query(sql, [id, account_status, genDateNowWithoutLocalOffset()])
+      const { rows } = await client.query(sql, [id, account_status])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `update Error ${(e as string).toString()}` })

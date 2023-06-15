@@ -4,7 +4,7 @@ import { client } from '..'
 export async function createUserRoleTable(): Promise<void | false> {
   const sql: string = `
     CREATE TABLE IF NOT EXISTS user_role (
-      id text PRIMARY KEY,
+      id bigserial PRIMARY KEY,
       name text NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP

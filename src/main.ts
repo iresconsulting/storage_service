@@ -8,6 +8,10 @@ import './utils/big_number'
 // not required to initialize
 // import './utils/firebase/admin'
 
+import { authorize } from './utils/gcp'
+import Scheduler from './utils/scheduler'
+import clearPublicDir from './tasks/clearPublic'
+
 async function db() {
   await Promise.allSettled([
     initPg(),
@@ -20,6 +24,8 @@ async function utils() {
 
 export default async function main() {
   Logger.generateTimeLog({ label: Logger.Labels.ENV, message: '-------main_start-------' })
+  new Scheduler('0 1 * * *', clearPublicDir, null, { invokeOnInitialization: true })
   await db()
+  await authorize()
   Logger.generateTimeLog({ label: Logger.Labels.ENV, message: '-------main_end-------' })
 }
