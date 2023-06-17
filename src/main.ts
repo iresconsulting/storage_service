@@ -24,7 +24,7 @@ async function utils() {
 
 export default async function main() {
   Logger.generateTimeLog({ label: Logger.Labels.ENV, message: '-------main_start-------' })
-  new Scheduler('0 1 * * *', clearPublicDir, null, { invokeOnInitialization: true })
+  // new Scheduler('0 1 * * *', clearPublicDir, null, { invokeOnInitialization: true })
   await db()
   await authorize()
   Logger.generateTimeLog({ label: Logger.Labels.ENV, message: '-------main_end-------' })
