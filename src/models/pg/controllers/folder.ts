@@ -27,13 +27,7 @@ namespace Folder {
   }
 
   // TODO pagination logic
-  export async function getAll(name?: string, id?: string | null): Promise<Array<any> | false> {
-    // let sql = `
-    //   SELECT *
-    //   FROM folder
-    //   ORDER BY last_updated DESC
-    // `
-
+  export async function getAll(name?: string, id?: string | null): Promise<Array<any> | false> {    
     let sql = `
       SELECT *
       FROM folder
@@ -54,10 +48,17 @@ namespace Folder {
         WHERE parent_id = $1
         ORDER BY name ASC
       `
-    }
+    } else if (id === undefined || id === null) {
+      sql = `
+        SELECT *
+        FROM folder
+        WHERE parent_id IS NULL
+        ORDER BY name ASC
+      `
+    }    
 
     try {
-      const { rows } = await client.query(sql, name ? [`%${name}%`] : id || id === null ? [id] : [])
+      const { rows } = await client.query(sql, name ? [`%${name}%`] : id ? [id] : [])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getAll Error ${(e as string).toString()}` })

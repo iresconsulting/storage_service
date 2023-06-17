@@ -37,14 +37,14 @@ router.get('/db/init', async (req, res) => {
     // await dropMemberTable()
     // await dropUserRoleTable()
     // await dropSystemConfigTable()
-    // await dropRecordTable()
+    await dropRecordTable()
     await dropFolderTable()
     // create
     await Promise.all([
       // createMemberTable(),
       // createUserRoleTable(),
       // createSystemConfigTable(),
-      // createRecordTable(),
+      createRecordTable(),
       createFolderTable(),
     ])
     // await SystemConfig.create('root', '1234qwer')
@@ -99,10 +99,11 @@ router.get('/folders', async (req, res) => {
 // get records
 router.get('/records', async (req, res) => {
  try {
-  const { name } = req.query
+  const { name, folder_id } = req.query
   
-  const _name = name ? String(name) : ''
-  const list = await Record.getAll(_name)
+  const _name = name ? String(name) : undefined
+  const _folder_id = folder_id ? String(folder_id) : undefined
+  const list = await Record.getAll(_name, _folder_id)
   return HttpRes.send200(res, 'success', list)
  } catch {
   return HttpRes.send500(res)
@@ -121,7 +122,7 @@ router.post('/records', Uploader.instance.fields([{ name: 'file', maxCount: 1 }]
     const mimetype = _file.mimetype
     const path = _file.path
 
-    const { id, name, roles, tags } = req.body
+    const { id, name, roles, tags, folder_id } = req.body
     
     const uploaded = await gdrive.uploadFile({
       name,
@@ -134,7 +135,7 @@ router.post('/records', Uploader.instance.fields([{ name: 'file', maxCount: 1 }]
       const update = await Record.update(id, name, fileId, roles, tags)
       return HttpRes.send200(res, 'success', update)
     } else {
-      const insert = await Record.create(name, fileId, roles, tags)
+      const insert = await Record.create(name, fileId, roles, tags, folder_id)
       return HttpRes.send200(res, 'success', insert)
     }
    } catch(e) {

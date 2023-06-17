@@ -9,15 +9,16 @@ namespace Record {
     path: string,
     roles: string,
     tags: string,
+    folder_id?: string
   ): Promise<Array<any> | false> {
     const sql = `
-      INSERT INTO record(name, path, roles, tags)
-      VALUES($1, $2, $3, $4)
+      INSERT INTO record(name, path, roles, tags, folder_id)
+      VALUES($1, $2, $3, $4, $5)
       RETURNING *
     `
 
     try {
-      const { rows } = await client.query(sql, [name, path, roles, tags])
+      const { rows } = await client.query(sql, [name, path, roles, tags, folder_id || ''])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `create Error ${(e as string).toString()}` })
@@ -26,10 +27,11 @@ namespace Record {
   }
 
   // TODO pagination logic
-  export async function getAll(name = ''): Promise<Array<any> | false> {
+  export async function getAll(name?: string, folder_id?: string): Promise<Array<any> | false> {
     let sql = `
       SELECT *
       FROM record
+      WHERE folder_id = ''
       ORDER BY last_updated DESC
     `
 
@@ -40,10 +42,17 @@ namespace Record {
         WHERE name LIKE $1
         ORDER BY last_updated DESC
       `
+    } else if (folder_id) {
+      sql = `
+        SELECT *
+        FROM record
+        WHERE folder_id = $1
+        ORDER BY last_updated DESC
+      `
     }
 
     try {
-      const { rows } = await client.query(sql, name ? [`%${name}%`] : [])
+      const { rows } = await client.query(sql, name ? [`%${name}%`] : folder_id ? [folder_id] : [])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getAll Error ${(e as string).toString()}` })
@@ -67,6 +76,26 @@ namespace Record {
 
     try {
       const { rows } = await client.query(sql, [id, name, path, roles, tags, genDateNowWithoutLocalOffset()])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `update Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
+  export async function updateFolder(
+    id: string,
+    folder_id: string,
+  ): Promise<Array<any> | false> {
+    const sql = `
+      UPDATE record
+      SET folder_id = $2, last_updated = $3
+      WHERE id = $1
+      RETURNING *
+    `
+
+    try {
+      const { rows } = await client.query(sql, [id, folder_id, genDateNowWithoutLocalOffset()])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `update Error ${(e as string).toString()}` })
