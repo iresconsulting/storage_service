@@ -16,14 +16,15 @@ import moment from 'moment'
 import jwt from 'jsonwebtoken'
 import { pgArrToArr } from '../models/pg/utils/helpers'
 import axios, { AxiosError, AxiosResponse } from 'axios'
+import Folder from '../models/pg/controllers/folder'
+import { createFolderTable, dropFolderTable } from '../models/pg/models/folder'
 
 const router: Router = express.Router()
 
 const env = process.env
 
 router.get('/health', (req, res) => {
-  HttpRes.send200(res)
-  return
+  return HttpRes.send200(res)
 })
 
 router.get('/db/init', async (req, res) => {
@@ -33,18 +34,20 @@ router.get('/db/init', async (req, res) => {
     }
     console.log('---tx start---');
     // drop
-    await dropMemberTable()
-    await dropUserRoleTable()
-    await dropSystemConfigTable()
-    await dropRecordTable()
+    // await dropMemberTable()
+    // await dropUserRoleTable()
+    // await dropSystemConfigTable()
+    // await dropRecordTable()
+    await dropFolderTable()
     // create
     await Promise.all([
-      createMemberTable(),
-      createUserRoleTable(),
-      createSystemConfigTable(),
-      createRecordTable()
+      // createMemberTable(),
+      // createUserRoleTable(),
+      // createSystemConfigTable(),
+      // createRecordTable(),
+      createFolderTable(),
     ])
-    await SystemConfig.create('root', '1234qwer')
+    // await SystemConfig.create('root', '1234qwer')
     console.log('---tx end---');
     return HttpRes.send200(res)
   } catch(e) {
@@ -58,6 +61,37 @@ router.get('/version', async (req: Request, res: Response) => {
   HttpRes.send200(res, null, { version: jsonPackage.version })
   return
 })
+
+// get folders
+router.get('/folders', async (req, res) => {
+  try {
+   const { name, id } = req.query
+   
+   const _name = name ? String(name) : undefined
+   const _id = id ? String(id) : undefined
+   const list = await Folder.getAll(_name, _id)
+   return HttpRes.send200(res, 'success', list)
+  } catch {
+   return HttpRes.send500(res)
+  }
+ })
+
+ // create, update folders
+ router.post('/folders', async (req, res) => {
+  try {
+   const { name, id, parent_name, parent_id, hidden, password } = req.body
+  
+   if (id) {
+     const list = await Folder.update(id, name, parent_name || '', parent_id || null, password || '', hidden || false)
+     return HttpRes.send200(res, 'success', list)
+   } else {
+    const list = await Folder.create(name, parent_name || '', parent_id || null, password || '', hidden || false)
+    return HttpRes.send200(res, 'success', list)
+   }
+  } catch {
+   return HttpRes.send500(res)
+  }
+ })
 
 // get records
 router.get('/records', async (req, res) => {
