@@ -67,7 +67,7 @@ namespace Folder {
 
   export async function update(
     id: string,
-    name: string,
+    name?: string,
     parent_name?: string | null,
     parent_id?: string | null,
     password?: string,
@@ -81,10 +81,30 @@ namespace Folder {
     `
 
     try {
-      const { rows } = await client.query(sql, [id, name, parent_name || '', parent_id || null, password, hidden || false, genDateNowWithoutLocalOffset()])
+      const { rows } = await client.query(sql, [id, name || '', parent_name || '', parent_id || null, password, hidden || false, genDateNowWithoutLocalOffset()])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `update Error ${(e as string).toString()}` })
+      return false
+    }
+  }
+
+  export async function hide(
+    id: string,
+    hidden: boolean,
+  ): Promise<Array<any> | false> {
+    const sql = `
+      UPDATE folder
+      SET hidden = $2, last_updated = $3
+      WHERE id = $1
+      RETURNING *
+    `
+
+    try {
+      const { rows } = await client.query(sql, [id, hidden, genDateNowWithoutLocalOffset()])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `hide Error ${(e as string).toString()}` })
       return false
     }
   }

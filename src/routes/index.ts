@@ -79,17 +79,20 @@ router.get('/folders', async (req, res) => {
  // create, update folders
  router.post('/folders', async (req, res) => {
   try {
-   const { name, id, parent_name, parent_id, hidden, password } = req.body
-  
-   if (id) {
+   const { name, id, parent_name, parent_id, hidden, password, action_type } = req.body
+    
+   if (action_type === 'delete' && id && hidden !== undefined) {
+    const list = await Folder.hide(id, hidden)
+    return HttpRes.send200(res, 'success', list)
+   } else if (id) {
      const list = await Folder.update(id, name, parent_name || '', parent_id || null, password || '', hidden || false)
      return HttpRes.send200(res, 'success', list)
    } else {
     const list = await Folder.create(name, parent_name || '', parent_id || null, password || '', hidden || false)
     return HttpRes.send200(res, 'success', list)
    }
-  } catch {
-   return HttpRes.send500(res)
+  } catch(e) {
+   return HttpRes.send500(res, String(e))
   }
  })
 
