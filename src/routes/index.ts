@@ -139,8 +139,7 @@ router.post('/records', Uploader.instance.fields([{ name: 'file', maxCount: 1 }]
       return HttpRes.send200(res, 'success', insert)
     }
    } catch(e) {
-    // console.log(String(e));
-    return HttpRes.send500(res)
+    return HttpRes.send500(res, String(e))
    }
 })
 
