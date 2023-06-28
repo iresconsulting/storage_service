@@ -113,7 +113,12 @@ router.get('/records', async (req, res) => {
 // create, update records
 router.post('/records', Uploader.instance.fields([{ name: 'file', maxCount: 1 }]), async (req: any, res) => {
   try {
-    // console.log(req.files);
+    const { id, name, roles, tags, folder_id, action_type } = req.body
+    // hide
+    if (action_type === 'delete' && id) {
+      const hide = await Record.hide(id, true)
+      return HttpRes.send200(res, 'success', hide)
+    }
     if (!req.files) {
       return HttpRes.send400(res)
     }
@@ -122,7 +127,6 @@ router.post('/records', Uploader.instance.fields([{ name: 'file', maxCount: 1 }]
     const mimetype = _file.mimetype
     const path = _file.path
 
-    const { id, name, roles, tags, folder_id, action_type } = req.body
     
     const uploaded = await gdrive.uploadFile({
       name,
@@ -131,10 +135,7 @@ router.post('/records', Uploader.instance.fields([{ name: 'file', maxCount: 1 }]
       path,
     })
     const fileId = uploaded.data.id
-    if (action_type === 'delete' && id) {
-      const hide = await Record.hide(id, true)
-      return HttpRes.send200(res, 'success', hide)
-    } else if (id) {
+    if (id) {
       const update = await Record.update(id, name, fileId, roles, tags)
       return HttpRes.send200(res, 'success', update)
     } else {
