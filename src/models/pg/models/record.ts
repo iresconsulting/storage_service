@@ -9,6 +9,7 @@ export async function createRecordTable(): Promise<void | false> {
       path text DEFAULT '',
       roles text DEFAULT '',
       tags text DEFAULT '',
+      hidden boolean DEFAULT false,
       folder_id text DEFAULT '',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP

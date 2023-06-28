@@ -102,6 +102,26 @@ namespace Record {
       return false
     }
   }
+
+  export async function hide(
+    id: string,
+    hidden: boolean,
+  ): Promise<Array<any> | false> {
+    const sql = `
+      UPDATE record
+      SET hidden = $2, last_updated = $3
+      WHERE id = $1
+      RETURNING *
+    `
+
+    try {
+      const { rows } = await client.query(sql, [id, hidden, genDateNowWithoutLocalOffset()])
+      return querySuccessHandler(rows)
+    } catch (e: unknown) {
+      Logger.generateTimeLog({ label: Logger.Labels.PG, message: `hide Error ${(e as string).toString()}` })
+      return false
+    }
+  }
 }
 
 export default Record
