@@ -9,16 +9,17 @@ namespace Record {
     path: string,
     roles: string,
     tags: string,
-    folder_id?: string
+    mimetype: string,
+    folder_id?: string,
   ): Promise<Array<any> | false> {
     const sql = `
-      INSERT INTO record(name, path, roles, tags, folder_id)
-      VALUES($1, $2, $3, $4, $5)
+      INSERT INTO record(name, path, roles, tags, folder_id, mimetype)
+      VALUES($1, $2, $3, $4, $5, $6)
       RETURNING *
     `
 
     try {
-      const { rows } = await client.query(sql, [name, path, roles, tags, folder_id || ''])
+      const { rows } = await client.query(sql, [name, path, roles, tags, mimetype, folder_id || ''])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `create Error ${(e as string).toString()}` })
@@ -27,7 +28,7 @@ namespace Record {
   }
 
   // TODO pagination logic
-  export async function getAll(name?: string, folder_id?: string): Promise<Array<any> | false> {
+  export async function getAll(name?: string, folder_id?: string, id?: string): Promise<Array<any> | false> {
     let sql = `
       SELECT *
       FROM record
@@ -49,10 +50,17 @@ namespace Record {
         WHERE folder_id = $1
         ORDER BY last_updated DESC
       `
+    } else if (id) {
+      sql = `
+        SELECT *
+        FROM record
+        WHERE id = $1
+        ORDER BY last_updated DESC
+      `
     }
 
     try {
-      const { rows } = await client.query(sql, name ? [`%${name}%`] : folder_id ? [folder_id] : [])
+      const { rows } = await client.query(sql, name ? [`%${name}%`] : folder_id ? [folder_id] : id ? [id] : [])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `getAll Error ${(e as string).toString()}` })
@@ -66,16 +74,17 @@ namespace Record {
     path: string,
     roles: string,
     tags: string,
+    mimetype: string,
   ): Promise<Array<any> | false> {
     const sql = `
       UPDATE record
-      SET name = $2, path = $3, roles = $4, tags = $5, last_updated = $6
+      SET name = $2, path = $3, roles = $4, tags = $5, mimetype = $6, last_updated = $7
       WHERE id = $1
       RETURNING *
     `
 
     try {
-      const { rows } = await client.query(sql, [id, name, path, roles, tags, genDateNowWithoutLocalOffset()])
+      const { rows } = await client.query(sql, [id, name, path, roles, tags, mimetype, genDateNowWithoutLocalOffset()])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `update Error ${(e as string).toString()}` })

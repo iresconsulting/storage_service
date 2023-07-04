@@ -101,9 +101,16 @@ router.get('/records', async (req, res) => {
  try {
   const { name, folder_id } = req.query
   
+  let list: any[] = []
   const _name = name ? String(name) : undefined
   const _folder_id = folder_id ? String(folder_id) : undefined
-  const list = await Record.getAll(_name, _folder_id)
+  if (_name) {
+    list = await Record.getAll(_name) || []
+    return HttpRes.send200(res, 'success', list)
+  } else if (_folder_id) {
+    list = await Record.getAll(_folder_id) || []
+    return HttpRes.send200(res, 'success', list)
+  }
   return HttpRes.send200(res, 'success', list)
  } catch {
   return HttpRes.send500(res)
@@ -123,23 +130,29 @@ router.post('/records', Uploader.instance.fields([{ name: 'file', maxCount: 1 }]
       return HttpRes.send400(res)
     }
     const _file = req.files.file[0]
-    // const _newFileName = _file.filename
     const mimetype = _file.mimetype
     const path = _file.path
 
-    
-    const uploaded = await gdrive.uploadFile({
-      name,
-      fields: 'id',
-      mimeType: mimetype,
-      path,
-    })
-    const fileId = uploaded.data.id
+    // const destination = _file.destination
+    // const originalname = _file.originalname
+    // const encoding = _file.encoding
+    // const size = _file.size
+
+    // console.log('_file', _file);
+
+    // const uploaded = await gdrive.uploadFile({
+    //   name,
+    //   fields: 'id',
+    //   mimeType: mimetype,
+    //   path,
+    // })
+    // const fileId = uploaded.data.id
     if (id) {
-      const update = await Record.update(id, name, fileId, roles, tags)
+      // const update = await Record.update(id, name, fileId, roles, tags, mimetype)
+      const update = await Record.update(id, name, path, roles, tags, mimetype)
       return HttpRes.send200(res, 'success', update)
     } else {
-      const insert = await Record.create(name, fileId, roles, tags, folder_id)
+      const insert = await Record.create(name, path, roles, tags, mimetype, folder_id)
       return HttpRes.send200(res, 'success', insert)
     }
    } catch(e) {
@@ -149,10 +162,16 @@ router.post('/records', Uploader.instance.fields([{ name: 'file', maxCount: 1 }]
 
 router.post('/records/download', async (req, res) => {
   try {
-    const { file_id } = req.body
-    const file = await gdrive.downloadFile(file_id)
+    // const { fileid } = req.body
+    const { id } = req.body
+    // const file = await gdrive.downloadFile(file_id)
     // console.log(file);
-    return HttpRes.send200(res, 'success', { file })
+    const select = await Record.getAll(undefined, undefined, id)
+    if (select && select.length) {
+      return HttpRes.send200(res, 'success', { file: select[0] })
+    } else {
+      return HttpRes.send400(res)
+    }
   } catch(e) {
     // console.log(String(e));
     return HttpRes.send500(res)
