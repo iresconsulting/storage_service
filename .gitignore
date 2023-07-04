@@ -26,7 +26,7 @@ yarn-error.log*
 yarn.lock
 package-lock.json
 
-*/src/data/gcp/token.json
+/src/data/gcp/token.json
 
-*/src/uploads/*
-!*/src/uploads/placeholder.txt
+/src/uploads/*
+!/src/uploads/placeholder.txt
