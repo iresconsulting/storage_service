@@ -28,5 +28,5 @@ package-lock.json
 
 /src/data/gcp/token.json
 
-/src/uploads/*
+/src/uploads/
 !/src/uploads/placeholder.txt
