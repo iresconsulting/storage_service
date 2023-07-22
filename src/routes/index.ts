@@ -152,7 +152,7 @@ router.post('/records', Uploader.instance.fields([{ name: 'file', maxCount: 1 }]
       const update = await Record.update(id, name, path, roles, tags, mimetype)
       return HttpRes.send200(res, 'success', update)
     } else {
-      const insert = await Record.create(name, path, roles, tags, mimetype, folder_id)
+      const insert = await Record.create(name, path, roles, tags, folder_id, mimetype)
       return HttpRes.send200(res, 'success', insert)
     }
    } catch(e) {
