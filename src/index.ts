@@ -4,6 +4,7 @@ import cors from 'cors'
 // import formidable from 'express-formidable'
 import Logger from './utils/logger'
 import main from './main'
+import * as path from 'path'
 
 import indexRouter from './routes/index'
 import { HttpRes } from './routes/utils/http'
