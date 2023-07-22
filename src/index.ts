@@ -27,6 +27,8 @@ Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `__dirname_=${__dirn
 // publicly accessible folder
 app.use('/public', express.static(__dirname_ + '/public'))
 app.use('/uploads', express.static(__dirname_ + '/uploads'))
+app.use(express.static(path.join(__dirname, '..', 'public')))
+app.use(express.static(path.join(__dirname, '..', 'uploads')))
 
 // 403 rest of the routes
 app.use('*', function (req: Request, res: Response, next: Function): void {
