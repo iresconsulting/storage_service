@@ -110,8 +110,10 @@ router.get('/records', async (req, res) => {
   } else if (_folder_id) {
     list = await Record.getAll(_folder_id) || []
     return HttpRes.send200(res, 'success', list)
+  } else {
+    list = await Record.getAll('') || []
+    return HttpRes.send200(res, 'success', list)
   }
-  return HttpRes.send200(res, 'success', list)
  } catch {
   return HttpRes.send500(res)
  }
