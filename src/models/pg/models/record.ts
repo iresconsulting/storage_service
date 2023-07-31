@@ -12,6 +12,7 @@ export async function createRecordTable(): Promise<void | false> {
       hidden boolean DEFAULT false,
       folder_id text DEFAULT '',
       mimetype text DEFAULT '',
+      uploader text DEFAULT '',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
