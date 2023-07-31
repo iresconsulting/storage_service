@@ -19,9 +19,9 @@ async function setPgConnection() {
   const cl = new Client({
     connectionString,
   })
-  await client.connect()
+  await cl.connect()
   Logger.generateTimeLog({ label: Logger.Labels.PG, message: 'connected.' })
-  await client.query('SELECT NOW()', (err: Error, res: QueryResult<any>) => {
+  await cl.query('SELECT NOW()', (err: Error, res: QueryResult<any>) => {
     if (err) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `connection error: ${String(err)}` })
       return
