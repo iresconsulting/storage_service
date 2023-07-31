@@ -455,7 +455,6 @@ router.post('/login/line/verification', async (req: Request, res: Response) => {
     })
 })
 
-
 router.get('/verification', async (req, res) => {
   try {
     const authorization = req.headers['authorization'] || ''
