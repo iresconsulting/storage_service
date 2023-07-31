@@ -74,7 +74,7 @@ router.get('/folders', async (req, res) => {
   } catch {
    return HttpRes.send500(res)
   }
- })
+})
 
  // create, update folders
  router.post('/folders', async (req, res) => {
