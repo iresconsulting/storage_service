@@ -41,13 +41,13 @@ router.get('/db/init', async (req, res) => {
     await dropFolderTable()
     // create
     await Promise.all([
-      // createMemberTable(),
-      // createUserRoleTable(),
-      // createSystemConfigTable(),
+      createMemberTable(),
+      createUserRoleTable(),
+      createSystemConfigTable(),
       createRecordTable(),
       createFolderTable(),
     ])
-    // await SystemConfig.create('root', '1234qwer')
+    await SystemConfig.create('root', '1234qwer')
     console.log('---tx end---');
     return HttpRes.send200(res)
   } catch(e) {

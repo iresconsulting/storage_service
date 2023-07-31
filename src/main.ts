@@ -11,10 +11,17 @@ import './utils/big_number'
 import { authorize } from './utils/gcp'
 import Scheduler from './utils/scheduler'
 import clearPublicDir from './tasks/clearPublic'
+import initMysql from './models/mysql'
+
+const dbType = process.env.DB_TYPE || 'pg'
 
 async function db() {
+  if (dbType === 'pg') {
+    await initPg()
+  } else if (dbType === 'mysql') {
+    await initMysql()
+  }
   await Promise.allSettled([
-    initPg(),
     // initMongo()
   ])
 }

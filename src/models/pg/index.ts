@@ -19,7 +19,7 @@ export default async function initPg(): Promise<void> {
     Logger.generateTimeLog({ label: Logger.Labels.PG, message: 'connecting...' })
     client = new Client({
       connectionString,
-    })    
+    })
     await client.connect()
     Logger.generateTimeLog({ label: Logger.Labels.PG, message: 'connected.' })
     await client.query('SELECT NOW()', (err: Error, res: QueryResult<any>) => {
