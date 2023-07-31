@@ -49,6 +49,12 @@ Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `ENV_GLOBAL=${proces
 Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `PG_URI=${process.env.PG_URI}` })
 // Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `MONGO_URI=${process.env.MONGO_URI}` })
 
+Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `DB_TYPE=${process.env.DB_TYPE}` })
+Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `DB_HOST=${process.env.DB_HOST}` })
+Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `DB_USER=${process.env.DB_USER}` })
+Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `DB_PASSWORD=${process.env.DB_PASSWORD}` })
+Logger.generateTimeLog({ label: Logger.Labels.ENV, message: `DB_DATABASE=${process.env.DB_DATABASE}` })
+
 /* initalize main start */
 main()
 /* initalize main end */
