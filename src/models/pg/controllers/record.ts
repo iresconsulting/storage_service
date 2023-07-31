@@ -11,15 +11,16 @@ namespace Record {
     tags: string,
     mimetype: string,
     folder_id?: string,
+    uploader?: string,
   ): Promise<Array<any> | false> {
     const sql = `
-      INSERT INTO record(name, path, roles, tags, folder_id, mimetype)
-      VALUES($1, $2, $3, $4, $5, $6)
+      INSERT INTO record(name, path, roles, tags, folder_id, mimetype, uploader)
+      VALUES($1, $2, $3, $4, $5, $6, $7)
       RETURNING *
     `
 
     try {
-      const { rows } = await client.query(sql, [name, path, roles, tags, mimetype, folder_id || ''])
+      const { rows } = await client.query(sql, [name, path, roles, tags, mimetype, folder_id || '', uploader])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `create Error ${(e as string).toString()}` })
@@ -75,16 +76,17 @@ namespace Record {
     roles: string,
     tags: string,
     mimetype: string,
+    uploader: string,
   ): Promise<Array<any> | false> {
     const sql = `
       UPDATE record
-      SET name = $2, path = $3, roles = $4, tags = $5, mimetype = $6, last_updated = $7
+      SET name = $2, path = $3, roles = $4, tags = $5, mimetype = $6, last_updated = $7, uploader = $8
       WHERE id = $1
       RETURNING *
     `
 
     try {
-      const { rows } = await client.query(sql, [id, name, path, roles, tags, mimetype, genDateNowWithoutLocalOffset()])
+      const { rows } = await client.query(sql, [id, name, path, roles, tags, mimetype, genDateNowWithoutLocalOffset(), uploader])
       return querySuccessHandler(rows)
     } catch (e: unknown) {
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `update Error ${(e as string).toString()}` })

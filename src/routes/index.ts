@@ -122,7 +122,7 @@ router.get('/records', async (req, res) => {
 // create, update records
 router.post('/records', Uploader.instance.fields([{ name: 'file', maxCount: 1 }]), async (req: any, res) => {
   try {
-    const { id, name, roles, tags, folder_id, action_type } = req.body
+    const { id, name, roles, tags, folder_id, uploader, action_type } = req.body
     // hide
     if (action_type === 'delete' && id) {
       const hide = await Record.hide(id, true)
@@ -151,10 +151,10 @@ router.post('/records', Uploader.instance.fields([{ name: 'file', maxCount: 1 }]
     // const fileId = uploaded.data.id
     if (id) {
       // const update = await Record.update(id, name, fileId, roles, tags, mimetype)
-      const update = await Record.update(id, name, path, roles, tags, mimetype)
+      const update = await Record.update(id, name, path, roles, tags, mimetype, uploader || '')
       return HttpRes.send200(res, 'success', update)
     } else {
-      const insert = await Record.create(name, path, roles, tags, folder_id, mimetype)
+      const insert = await Record.create(name, path, roles, tags, folder_id, mimetype, uploader || '')
       return HttpRes.send200(res, 'success', insert)
     }
    } catch(e) {
