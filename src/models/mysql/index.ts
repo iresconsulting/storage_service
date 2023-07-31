@@ -11,16 +11,13 @@ export default function initMysql() {
       password :  env.DB_PASSWORD,
       database :  env.DB_DATABASE,
     });
-  
     connection.connect();
-    
     connection.query('SELECT NOW()', function (error: any, res: any, fields: any) {
       if (error) {
         throw error;
       }
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `SELECT NOW(): ${JSON.stringify(res[0].solution)}` })
     })
-
     return connection
   } catch (err: unknown) {
     Logger.generateTimeLog({ label: Logger.Labels.PG, message: `connection error: ${String(err)}` })
