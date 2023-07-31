@@ -20,7 +20,10 @@ export default function initMysql() {
       }
       Logger.generateTimeLog({ label: Logger.Labels.PG, message: `SELECT NOW(): ${JSON.stringify(res[0].solution)}` })
     })
+
+    return connection
   } catch (err: unknown) {
     Logger.generateTimeLog({ label: Logger.Labels.PG, message: `connection error: ${String(err)}` })
+    return null
   }
 }
