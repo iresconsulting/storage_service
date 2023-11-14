@@ -29,9 +29,9 @@ router.get('/health', (req, res) => {
 
 router.get('/db/init', async (req, res) => {
   try {
-    if (process.env.ALLOW_DB_INIT !== 'true') {
-      return HttpRes.send401(res)
-    }
+    // if (process.env.ALLOW_DB_INIT !== 'true' || process.env.ALLOW_DB_INIT !== true) {
+    //   return HttpRes.send401(res)
+    // }
     console.log('---tx start---');
     // drop
     // await dropMemberTable()
